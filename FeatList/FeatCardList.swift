@@ -20,6 +20,7 @@ class FeatCardList {
 struct FeatCardCodable: Codable {
     var count: Int
     var color: String
+    var title: String
     var icon: String
     var iconBack: String
     var contents: [String]
@@ -30,6 +31,7 @@ struct FeatCardCodable: Codable {
         
         case count
         case color
+        case title
         case icon
         case contents
         case tags
