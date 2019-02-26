@@ -9,7 +9,6 @@
 import UIKit
 
 class FeatCardDetailViewController: UIViewController {
-    @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var prereqLabel: UILabel!
     @IBOutlet weak var shortDescLabel: UILabel!
     @IBOutlet weak var descLabel: UILabel!
@@ -17,9 +16,9 @@ class FeatCardDetailViewController: UIViewController {
     var sourceFeat: FeatCardCodable?
     
     override func viewDidLoad() {
-        self.titleLabel.text = sourceFeat?.title
         self.prereqLabel.text = sourceFeat?.prereqs
         self.shortDescLabel.text = sourceFeat?.shortDescription
         self.descLabel.text = sourceFeat?.description
+        self.navigationItem.title = sourceFeat?.title
     }
 }
