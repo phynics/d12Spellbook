@@ -37,17 +37,17 @@ class FeatListViewController: UIViewController {
 
 extension FeatListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.featList?.feats.count ?? 0
+        return self.featList?.count ?? 0
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72.0
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "featListCellPrototype") as! FeatListTableViewCell
-        let feat = self.featList?.feats[indexPath.row]
+        let feat = self.featList?[indexPath.row]
         if let feat = feat {
                 cell.title = feat.title
-                cell.desc = feat.tags.first ?? ""
+                cell.desc = feat.shortDescription
             }
         return cell
     }
