@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */; };
 		7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AB22249A1400722982 /* AppDelegate.swift */; };
 		7DCCD4AE22249A1400722982 /* FeatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AD22249A1400722982 /* FeatListViewController.swift */; };
 		7DCCD4B122249A1400722982 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AF22249A1400722982 /* Main.storyboard */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatCardDetailViewController.swift; sourceTree = "<group>"; };
 		7DCCD4A822249A1400722982 /* FeatList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FeatList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DCCD4AB22249A1400722982 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7DCCD4AD22249A1400722982 /* FeatListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatListViewController.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 				7DCCD4AD22249A1400722982 /* FeatListViewController.swift */,
 				7DCCD4BF22249F8700722982 /* FeatCardList.swift */,
 				7DCCD4C12224A61E00722982 /* FeatListTableViewCell.swift */,
+				7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */,
 				7DCCD4AF22249A1400722982 /* Main.storyboard */,
 				7DCCD4B222249A1600722982 /* Assets.xcassets */,
 				7DCCD4B422249A1600722982 /* LaunchScreen.storyboard */,
@@ -147,6 +150,7 @@
 			files = (
 				7DCCD4AE22249A1400722982 /* FeatListViewController.swift in Sources */,
 				7DCCD4C22224A61E00722982 /* FeatListTableViewCell.swift in Sources */,
+				7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */,
 				7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */,
 				7DCCD4C022249F8700722982 /* FeatCardList.swift in Sources */,
 			);

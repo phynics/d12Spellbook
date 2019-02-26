@@ -32,6 +32,14 @@ class FeatListViewController: UIViewController {
             }
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? FeatCardDetailViewController {
+            if let selected = tableView.indexPathForSelectedRow?.row {
+                vc.sourceFeat = self.featList![selected]
+            }
+        }
+    }
 
 }
 
@@ -50,5 +58,8 @@ extension FeatListViewController: UITableViewDelegate, UITableViewDataSource {
                 cell.desc = feat.shortDescription
             }
         return cell
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.performSegue(withIdentifier: "showFeatDetail", sender: nil)
     }
 }
