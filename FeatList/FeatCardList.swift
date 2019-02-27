@@ -11,13 +11,9 @@ import Foundation
 class FeatCardList {
     private let _feats: [FeatCardCodable]
     
-    subscript(index: Int) -> FeatCardCodable? {
+    var featList: [FeatCardCodable] {
         get {
-            if index < self._feats.count {
-                return self._feats[index]
-            } else {
-                return Optional<FeatCardCodable>.none
-            }
+            return _feats
         }
     }
     
