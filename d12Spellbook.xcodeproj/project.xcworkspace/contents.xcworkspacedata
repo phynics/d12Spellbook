@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:FeatList.xcodeproj">
+      location = "self:/Users/atakan/Developer/XCode/FeatList/d12Spellbook.xcodeproj">
    </FileRef>
 </Workspace>
