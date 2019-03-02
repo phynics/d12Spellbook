@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D075B772229F2BD0078D4BF /* FeatPfCommModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B762229F2BD0078D4BF /* FeatPfCommModel.swift */; };
+		7D075B79222A00610078D4BF /* FeatsPathfinderCommunity221118.json in Resources */ = {isa = PBXBuildFile; fileRef = 7D075B78222A00610078D4BF /* FeatsPathfinderCommunity221118.json */; };
+		7D075B7D222A06350078D4BF /* Int+asBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B7C222A06350078D4BF /* Int+asBool.swift */; };
 		7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */; };
 		7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AB22249A1400722982 /* AppDelegate.swift */; };
 		7DCCD4AE22249A1400722982 /* FeatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AD22249A1400722982 /* FeatListViewController.swift */; };
@@ -19,6 +22,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7D075B762229F2BD0078D4BF /* FeatPfCommModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatPfCommModel.swift; sourceTree = "<group>"; };
+		7D075B78222A00610078D4BF /* FeatsPathfinderCommunity221118.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FeatsPathfinderCommunity221118.json; sourceTree = "<group>"; };
+		7D075B7C222A06350078D4BF /* Int+asBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+asBool.swift"; sourceTree = "<group>"; };
 		7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatCardDetailViewController.swift; sourceTree = "<group>"; };
 		7DCCD4A822249A1400722982 /* d12Spellbook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = d12Spellbook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DCCD4AB22249A1400722982 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -66,6 +72,9 @@
 				7DCCD4AB22249A1400722982 /* AppDelegate.swift */,
 				7DCCD4AD22249A1400722982 /* FeatListViewController.swift */,
 				7DCCD4BF22249F8700722982 /* FeatCardList.swift */,
+				7D075B762229F2BD0078D4BF /* FeatPfCommModel.swift */,
+				7D075B7C222A06350078D4BF /* Int+asBool.swift */,
+				7D075B78222A00610078D4BF /* FeatsPathfinderCommunity221118.json */,
 				7DCCD4C12224A61E00722982 /* FeatListTableViewCell.swift */,
 				7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */,
 				7DCCD4AF22249A1400722982 /* Main.storyboard */,
@@ -135,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7DCCD4C42224AB2300722982 /* FeatPFRPG-CORE.json in Resources */,
+				7D075B79222A00610078D4BF /* FeatsPathfinderCommunity221118.json in Resources */,
 				7DCCD4B622249A1600722982 /* LaunchScreen.storyboard in Resources */,
 				7DCCD4B322249A1600722982 /* Assets.xcassets in Resources */,
 				7DCCD4B122249A1400722982 /* Main.storyboard in Resources */,
@@ -148,9 +158,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D075B7D222A06350078D4BF /* Int+asBool.swift in Sources */,
 				7DCCD4AE22249A1400722982 /* FeatListViewController.swift in Sources */,
 				7DCCD4C22224A61E00722982 /* FeatListTableViewCell.swift in Sources */,
 				7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */,
+				7D075B772229F2BD0078D4BF /* FeatPfCommModel.swift in Sources */,
 				7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */,
 				7DCCD4C022249F8700722982 /* FeatCardList.swift in Sources */,
 			);

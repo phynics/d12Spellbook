@@ -13,7 +13,7 @@ class FeatListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var featListInitals: [String]?
-    var featList: [FeatCardCodable]?
+    var featList: [FeatPfData]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,14 +23,14 @@ class FeatListViewController: UIViewController {
     }
     
     private func _loadFeatList() {
-        let resourceName = "FeatPFRPG-CORE"
+        let resourceName = "FeatsPathfinderCommunity221118"
         if let path = Bundle.main.url(forResource: resourceName, withExtension: "json") {
             do {
                 let data = try Data(contentsOf: path)
-                let feats = try FeatCardList(withData: data).featList
+                let feats = try FeatPfCommModel(withData: data).featList
                 var initials: Array<String> = []
                 for feat in feats {
-                    let initialLetter = String(feat.title.first!)
+                    let initialLetter = String(feat.name.first!)
                     if !initials.contains(initialLetter) {
                         initials.append(initialLetter)
                     }
@@ -47,9 +47,16 @@ class FeatListViewController: UIViewController {
         if let vc = segue.destination as? FeatCardDetailViewController {
             if let selected = tableView.indexPathForSelectedRow {
                 if let key = self.featListInitals?[selected.section] {
-                    if let sectionIndex = self.featList?.firstIndex(where:)({ $0.title.hasPrefix(key) }) {
+                    if let sectionIndex = self.featList?.firstIndex(where:)({ $0.name.hasPrefix(key) }) {
                         if let feat = self.featList?[sectionIndex + selected.row] {
-                            vc.sourceFeat = feat
+                            var descriptionString: String = ""
+                            do {
+                                let attributed = try NSAttributedString(data: feat.fullText.data(using: .unicode)!, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+                                descriptionString = attributed.string
+                            } catch {
+                                print(error)
+                            }
+                            vc.sourceFeat = (feat.name, feat.description, descriptionString, feat.prerequisites)
                         }
                     }
                 }
@@ -71,7 +78,7 @@ extension FeatListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let key = self.featListInitals?[section] {
             return self.featList?
-                .filter { $0.title.hasPrefix(key) }
+                .filter { $0.name.hasPrefix(key) }
                 .count ?? 0
         } else {
             return 0
@@ -85,10 +92,10 @@ extension FeatListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "featListCellPrototype") as! FeatListTableViewCell
         if let key = self.featListInitals?[indexPath.section] {
-            if let sectionIndex = self.featList?.firstIndex(where:)({ $0.title.hasPrefix(key) }) {
+            if let sectionIndex = self.featList?.firstIndex(where:)({ $0.name.hasPrefix(key) }) {
                 if let feat = self.featList?[sectionIndex + indexPath.row] {
-                    cell.title = feat.title
-                    cell.desc = feat.shortDescription
+                    cell.title = feat.name
+                    cell.desc = feat.description
                 }
             }
         }
