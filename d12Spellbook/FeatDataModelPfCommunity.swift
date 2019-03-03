@@ -1,26 +1,14 @@
 //
-//  FeatPfCommModel.swift
+//  FeatDataModelPfCommunity.swift
 //  d12Spellbook
 //
-//  Created by Atakan Dulker on 2.03.2019.
+//  Created by Atakan Dulker on 3.03.2019.
 //  Copyright © 2019 atakan. All rights reserved.
 //
 
 import Foundation
 
-class FeatPfCommModel {
-    var featList: [FeatPfData]
-    
-    init(withData data: Data) throws {
-        let decoder = JSONDecoder()
-        let rawDecode = try decoder.decode([String:FeatPfData].self, from: data)
-        self.featList = Array(rawDecode.values).sorted(by: { (a, b) -> Bool in
-            return a.name.lexicographicallyPrecedes(b.name)
-        })
-    }
-}
-
-struct FeatPfData {
+struct FeatDataModelPfCommunity {
     var id: Int
     var name: String
     var type: String
@@ -80,7 +68,7 @@ struct FeatPfData {
     }
 }
 
-extension FeatPfData: Decodable {
+extension FeatDataModelPfCommunity: Decodable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = try values.decode(Int.self, forKey:.id)

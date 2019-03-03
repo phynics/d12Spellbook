@@ -13,7 +13,7 @@ class FeatListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     var featListInitals: [String]?
-    var featList: [FeatPfData]?
+    var featList: [FeatDataViewModel]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +27,7 @@ class FeatListViewController: UIViewController {
         if let path = Bundle.main.url(forResource: resourceName, withExtension: "json") {
             do {
                 let data = try Data(contentsOf: path)
-                let feats = try FeatPfCommModel(withData: data).featList
+                let feats = try FeatDataViewModel.fromData(data)
                 var initials: Array<String> = []
                 for feat in feats {
                     let initialLetter = String(feat.name.first!)
@@ -49,14 +49,7 @@ class FeatListViewController: UIViewController {
                 if let key = self.featListInitals?[selected.section] {
                     if let sectionIndex = self.featList?.firstIndex(where:)({ $0.name.hasPrefix(key) }) {
                         if let feat = self.featList?[sectionIndex + selected.row] {
-                            var descriptionString: String = ""
-                            do {
-                                let attributed = try NSAttributedString(data: feat.fullText.data(using: .unicode)!, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
-                                descriptionString = attributed.string
-                            } catch {
-                                print(error)
-                            }
-                            vc.sourceFeat = (feat.name, feat.description, descriptionString, feat.prerequisites)
+                            vc.sourceFeat = (feat.name, feat.shortDescription, feat.description, feat.prerequisites)
                         }
                     }
                 }

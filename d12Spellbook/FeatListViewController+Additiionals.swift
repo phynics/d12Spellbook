@@ -37,7 +37,7 @@ extension FeatListViewController: UITableViewDataSource {
             if let sectionIndex = self.featList?.firstIndex(where:)({ $0.name.hasPrefix(key) }) {
                 if let feat = self.featList?[sectionIndex + indexPath.row] {
                     cell.title = feat.name
-                    cell.desc = feat.description
+                    cell.desc = feat.shortDescription
                 }
             }
         }

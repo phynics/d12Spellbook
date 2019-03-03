@@ -13,12 +13,12 @@ class FeatCardDetailViewController: UIViewController {
     @IBOutlet weak var shortDescLabel: UILabel!
     @IBOutlet weak var descLabel: UILabel!
     
-    var sourceFeat: (name: String, shortDesc: String, desc: String, prereq: String)?
+    var sourceFeat: (name: String, shortDesc: String, desc: NSAttributedString, prereq: NSAttributedString)?
     
     override func viewDidLoad() {
-        self.prereqLabel.text = sourceFeat?.prereq
+        self.prereqLabel.attributedText = sourceFeat?.prereq
         self.shortDescLabel.text = sourceFeat?.shortDesc
-        self.descLabel.text = sourceFeat?.desc
+        self.descLabel.attributedText = sourceFeat?.desc
         self.navigationItem.title = sourceFeat?.name
     }
 }
