@@ -92,7 +92,7 @@
                                 <rect key="frame" x="0.0" y="80" width="375" height="587"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="chj-57-OzA">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="587"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Short Description" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VT9-lQ-Cv3">
                                                 <rect key="frame" x="16" y="8" width="120.5" height="18"/>
@@ -111,7 +111,7 @@
                                                 </attributedString>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="250" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="150" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WLN-Oj-snW">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="150" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WLN-Oj-snW">
                                                 <rect key="frame" x="16" y="70.5" width="88" height="20.5"/>
                                                 <attributedString key="attributedText">
                                                     <fragment content="Description">
@@ -128,6 +128,7 @@
                                         <constraints>
                                             <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="WLN-Oj-snW" secondAttribute="bottom" id="0Mr-4l-VYW"/>
                                             <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="VT9-lQ-Cv3" secondAttribute="trailing" priority="750" constant="16" id="6O4-mU-KOV"/>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="400" id="Az6-eE-T14"/>
                                             <constraint firstItem="d07-Fd-0BQ" firstAttribute="leading" secondItem="chj-57-OzA" secondAttribute="leading" constant="16" id="Cqj-BZ-IvY"/>
                                             <constraint firstItem="WLN-Oj-snW" firstAttribute="leading" secondItem="chj-57-OzA" secondAttribute="leading" constant="16" id="JAo-ZP-M4g"/>
                                             <constraint firstItem="d07-Fd-0BQ" firstAttribute="top" secondItem="VT9-lQ-Cv3" secondAttribute="bottom" constant="8" id="Jrt-ED-Fiq"/>
@@ -144,6 +145,7 @@
                                     <constraint firstItem="chj-57-OzA" firstAttribute="top" secondItem="Efv-nk-sDb" secondAttribute="top" id="HgO-yO-BUg"/>
                                     <constraint firstAttribute="trailing" secondItem="chj-57-OzA" secondAttribute="trailing" id="XcZ-I6-OH3"/>
                                     <constraint firstAttribute="bottom" secondItem="chj-57-OzA" secondAttribute="bottom" priority="500" id="dSJ-Yk-4ml"/>
+                                    <constraint firstItem="chj-57-OzA" firstAttribute="centerY" secondItem="Efv-nk-sDb" secondAttribute="centerY" id="tkT-hi-HJD"/>
                                 </constraints>
                             </scrollView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xni-h4-UI0">
@@ -157,13 +159,13 @@
                         <constraints>
                             <constraint firstItem="Efv-nk-sDb" firstAttribute="leading" secondItem="Mm9-tM-aGa" secondAttribute="leading" id="3zv-Zg-08K"/>
                             <constraint firstItem="xni-h4-UI0" firstAttribute="trailing" secondItem="Efv-nk-sDb" secondAttribute="trailing" id="5Lo-6H-LBH"/>
-                            <constraint firstItem="Efv-nk-sDb" firstAttribute="top" secondItem="xni-h4-UI0" secondAttribute="top" constant="80" id="9XJ-9y-Fht"/>
+                            <constraint firstItem="Efv-nk-sDb" firstAttribute="top" secondItem="Oyv-Qb-ORc" secondAttribute="top" constant="16" id="9XJ-9y-Fht"/>
                             <constraint firstItem="Efv-nk-sDb" firstAttribute="bottom" secondItem="Oyv-Qb-ORc" secondAttribute="bottom" id="C87-4M-JcU"/>
                             <constraint firstItem="xni-h4-UI0" firstAttribute="leading" secondItem="Efv-nk-sDb" secondAttribute="leading" id="Lm2-7t-Ds1"/>
                             <constraint firstItem="Efv-nk-sDb" firstAttribute="top" secondItem="Oyv-Qb-ORc" secondAttribute="top" constant="16" id="RVG-Vw-s74"/>
                             <constraint firstAttribute="trailing" secondItem="Efv-nk-sDb" secondAttribute="trailing" id="Tvc-DA-6cG"/>
                             <constraint firstItem="chj-57-OzA" firstAttribute="centerX" secondItem="Oyv-Qb-ORc" secondAttribute="centerX" id="ZfC-iy-Vah"/>
-                            <constraint firstItem="chj-57-OzA" firstAttribute="height" secondItem="Mm9-tM-aGa" secondAttribute="height" id="x6m-s0-o1C"/>
+                            <constraint firstItem="xni-h4-UI0" firstAttribute="top" secondItem="Mm9-tM-aGa" secondAttribute="top" id="kk0-Lh-jZP"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Oyv-Qb-ORc"/>
                     </view>
