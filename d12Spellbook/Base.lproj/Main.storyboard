@@ -21,9 +21,14 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Zgt-Xd-afM">
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <searchBar key="tableHeaderView" contentMode="redraw" id="O7e-sU-3eq">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                    <textInputTraits key="textInputTraits"/>
+                                </searchBar>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="featListCellPrototype" rowHeight="72" id="eF3-mW-DNC" customClass="FeatListTableViewCell" customModule="d12Spellbook" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="72"/>
+                                        <rect key="frame" x="0.0" y="72" width="375" height="72"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eF3-mW-DNC" id="Wot-5n-jau">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="71.5"/>
@@ -72,6 +77,7 @@
                         <barButtonItem key="backBarButtonItem" title="Back" id="kK2-nk-keR"/>
                     </navigationItem>
                     <connections>
+                        <outlet property="searchBar" destination="O7e-sU-3eq" id="80A-kw-9qR"/>
                         <outlet property="tableView" destination="Zgt-Xd-afM" id="gVg-dt-Euv"/>
                         <segue destination="eBP-dt-HJ2" kind="show" identifier="showFeatDetail" id="j26-wD-rab"/>
                     </connections>

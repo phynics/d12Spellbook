@@ -11,15 +11,22 @@ import Foundation
 
 class FeatListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     var featListInitals: [String]?
     var featList: [FeatDataViewModel]?
+    
+    var showFilteredList = false
+    var filteredFeatList: [FeatDataViewModel]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         _loadFeatList()
+        
         tableView.delegate = self
         tableView.dataSource = self
+        
+        searchBar.delegate = self
     }
     
     private func _loadFeatList() {
@@ -46,10 +53,16 @@ class FeatListViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? FeatCardDetailViewController {
             if let selected = tableView.indexPathForSelectedRow {
-                if let key = self.featListInitals?[selected.section] {
-                    if let sectionIndex = self.featList?.firstIndex(where:)({ $0.name.hasPrefix(key) }) {
-                        if let feat = self.featList?[sectionIndex + selected.row] {
-                            vc.sourceFeat = (feat.name, feat.shortDescription, feat.description, feat.prerequisites)
+                if self.showFilteredList {
+                    if let feat = self.filteredFeatList?[selected.row] {
+                        vc.sourceFeat = (feat.name, feat.shortDescription, feat.description, feat.prerequisites)
+                    }
+                } else {
+                    if let key = self.featListInitals?[selected.section] {
+                        if let sectionIndex = self.featList?.firstIndex(where:)({ $0.name.hasPrefix(key) }) {
+                            if let feat = self.featList?[sectionIndex + selected.row] {
+                                vc.sourceFeat = (feat.name, feat.shortDescription, feat.description, feat.prerequisites)
+                            }
                         }
                     }
                 }
