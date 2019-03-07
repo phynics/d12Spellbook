@@ -7,83 +7,146 @@
 //
 
 import Foundation
-import UIKit
+import CoreData
 
 class FeatDataViewModel {
-    let name: String
-    let shortDescription: String
-    let description: NSAttributedString
-    let prerequisites: NSAttributedString
-    let sourceName: String
-    let type: String
-    let additionalType: String
+    let context: NSManagedObjectContext
     
-    init(name: String, shortDescription: String, description: NSAttributedString, prerequisites: NSAttributedString, sourceName: String, type: String, additionalType: String = "") {
-        self.name = name
-        self.shortDescription = shortDescription
-        self.description = description
-        self.prerequisites = prerequisites
-        self.sourceName = sourceName
-        self.type = type
-        self.additionalType = additionalType
+    init(withContext context: NSManagedObjectContext, withJsonData jsonData: Data?) throws {
+        self.context = context
+        
+        if let jsonData = jsonData {
+            let loadedFeats = try self._loadFeatsFrom(jsonData: jsonData)
+            loadedFeats.forEach { (loadedFeat) in
+                if loadFeatsFromDataModel(withPredicate: NSPredicate(format: "id == %d", loadedFeat.id)).count == 0 {
+                    addFeatToDataModel(loadedFeat)
+                }
+            }
+        }
     }
     
-    
-    private static func _convertFrom(jsonData: FeatDataModelPfCommunity) -> FeatDataViewModel {
-        let fontAttributes: [NSAttributedString.Key : Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
-        let benefitText = NSMutableAttributedString(string: "Benefit: ", attributes: fontAttributes)
-        let normalText = NSMutableAttributedString(string: "Normal: ", attributes: fontAttributes)
-        let specialText = NSMutableAttributedString(string: "Special: ", attributes: fontAttributes)
-        let goalText = NSMutableAttributedString(string: "Goal: ", attributes: fontAttributes)
-        let completionText = NSMutableAttributedString(string: "Completion Benefit: ", attributes: fontAttributes)
-        let noteText = NSMutableAttributedString(string: "Note: ", attributes: fontAttributes)
-        let spacing = NSMutableAttributedString(string: "\n\n")
-        
-        let description = NSMutableAttributedString(string: "")
-        if(jsonData.benefit.count > 0) {
-            description.append(benefitText)
-            description.append(NSMutableAttributedString(string: jsonData.benefit))
-            description.append(spacing)
-        }
-        if(jsonData.normal.count > 0) {
-            description.append(normalText)
-            description.append(NSMutableAttributedString(string: jsonData.normal))
-            description.append(spacing)
-        }
-        if(jsonData.special.count > 0) {
-            description.append(specialText)
-            description.append(NSMutableAttributedString(string: jsonData.special))
-            description.append(spacing)
-        }
-        if(jsonData.goal.count > 0) {
-            description.append(goalText)
-            description.append(NSMutableAttributedString(string: jsonData.goal))
-            description.append(spacing)
-        }
-        if(jsonData.completionBenefit.count > 0) {
-            description.append(completionText)
-            description.append(NSMutableAttributedString(string: jsonData.completionBenefit))
-            description.append(spacing)
-        }
-        if(jsonData.note.count > 0) {
-            description.append(noteText)
-            description.append(NSMutableAttributedString(string: jsonData.note))
-            description.append(spacing)
-        }
-        
-        let prerequisitesText = NSMutableAttributedString(string: "Prerequisites: ", attributes: fontAttributes)
-        prerequisitesText.append(NSMutableAttributedString(string: jsonData.prerequisites))
-        
-        return FeatDataViewModel(name: jsonData.name, shortDescription: jsonData.description, description: description, prerequisites: prerequisitesText, sourceName: jsonData.sourceName, type: jsonData.type)
-    }
-    
-    static func fromData(_ data: Data) throws -> [FeatDataViewModel] {
+    private func _loadFeatsFrom(jsonData data: Data) throws -> [FeatData] {
         let decoder = JSONDecoder()
         let rawDecode = try decoder.decode([String:FeatDataModelPfCommunity].self, from: data)
         let featList = Array(rawDecode.values).sorted(by: { (a, b) -> Bool in
             return a.name.lexicographicallyPrecedes(b.name)
         })
-        return featList.map { self._convertFrom(jsonData: $0) }
+        return featList.map { rawFeat in
+            return FeatData(
+                id: rawFeat.id,
+                name: rawFeat.name,
+                shortDesc: rawFeat.shortDesc,
+                benefit: rawFeat.benefit,
+                normal: rawFeat.normal,
+                special: rawFeat.special,
+                goal: rawFeat.goal,
+                completionBenefit: rawFeat.completionBenefit,
+                note: rawFeat.note,
+                prerequisites: rawFeat.prerequisites,
+                sourceName: rawFeat.sourceName,
+                type: rawFeat.type,
+                additionalTypes: rawFeat.additionalTypes,
+                multipleAllowed: rawFeat.multiplesAllowed
+            )
+        }
     }
     
+    func loadFeatsFromDataModel(withPredicate predicate: NSPredicate?) -> [FeatData] {
+        let featFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "FeatEntity")
+        
+        featFetch.predicate = predicate
+        featFetch.sortDescriptors = [NSSortDescriptor.init(key: "name", ascending: true)]
+        let feats = try! context.fetch(featFetch)
+        
+        return feats.map { $0 as! FeatEntity}
+            .map({ (item) in
+            return FeatData.init(fromCoreDataCounterpart: item)
+        })
+    }
+    
+    func addFeatToDataModel(_ feat: FeatData) {
+        let entity = NSEntityDescription.entity(forEntityName: "FeatEntity", in: self.context)!
+        let featEntity = NSManagedObject(entity: entity, insertInto: self.context)
+        
+        featEntity.setValuesForKeys(feat.asDictionary)
+        
+        do {
+            try context.save()
+        } catch {
+            print("Could not save. \(error)")
+        }
+    }
+    
+}
+
+struct FeatData {    
+    let id: Int
+    let name: String
+    let shortDesc: String
+    let benefit: String
+    let normal: String
+    let special: String
+    let goal: String
+    let completionBenefit: String
+    let note: String
+    let prerequisites: String
+    let sourceName: String
+    let type: String
+    let additionalTypes: String
+    let multipleAllowed: Bool
+    
+    var asDictionary: [String: Any] {
+        return [
+            "id": id,
+            "name": name,
+            "shortDesc": shortDesc,
+            "benefit": benefit,
+            "normal": normal,
+            "special": special,
+            "goal": goal,
+            "completionBenefit": completionBenefit,
+            "note": note,
+            "prerequisites": prerequisites,
+            "sourceName": sourceName,
+            "type": type,
+            "additionalTypes": additionalTypes,
+            "multipleAllowed": multipleAllowed
+        ]
+    }
+    
+    static func fromDictionary(_ dict: [String:Any]) -> FeatData {
+        return FeatData(id: dict["id"] as! Int,
+                        name: dict["name"] as! String,
+                        shortDesc: dict["shortDesc"] as! String,
+                        benefit: dict["benefit"] as! String,
+                        normal: dict["normal"] as! String,
+                        special: dict["special"] as! String,
+                        goal: dict["goal"] as! String,
+                        completionBenefit: dict["completionBenefit"] as! String,
+                        note: dict["note"] as! String,
+                        prerequisites: dict["prerequisites"] as! String,
+                        sourceName: dict["sourceName"] as! String,
+                        type: dict["type"] as! String,
+                        additionalTypes: dict["additionalTypes"] as! String,
+                        multipleAllowed: dict["multipleAllowed"] as! Bool)
+    }
+}
+
+extension FeatData {
+    init(fromCoreDataCounterpart featEntity: FeatEntity) {
+        self.id = Int(featEntity.id)
+        self.name = featEntity.name!
+        self.shortDesc = featEntity.shortDesc!
+        self.benefit = featEntity.benefit!
+        self.normal = featEntity.normal!
+        self.special = featEntity.special!
+        self.goal = featEntity.goal!
+        self.completionBenefit = featEntity.completionBenefit!
+        self.note = featEntity.note!
+        self.prerequisites = featEntity.prerequisites!
+        self.sourceName = featEntity.sourceName!
+        self.type = featEntity.type!
+        self.additionalTypes = featEntity.additionalTypes!
+        self.multipleAllowed = featEntity.multipleAllowed
+    }
 }

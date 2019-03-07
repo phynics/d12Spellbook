@@ -8,20 +8,30 @@
 
 import UIKit
 import Foundation
+import CoreData
 
 class FeatListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
-    var featListInitals: [String]?
-    var featList: [FeatDataViewModel]?
+    var container: NSPersistentContainer!
+    
+    var featListInitials: [String]?
+    var featList: [String: [FeatData]]?
+    
+    var featDataViewModel: FeatDataViewModel?
     
     var showFilteredList = false
-    var filteredFeatList: [FeatDataViewModel]?
+    var filteredFeatList: [FeatData]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.container = appDelegate.persistentContainer
+        
         _loadFeatList()
+        hideKeyboardOnTouch()
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -34,16 +44,14 @@ class FeatListViewController: UIViewController {
         if let path = Bundle.main.url(forResource: resourceName, withExtension: "json") {
             do {
                 let data = try Data(contentsOf: path)
-                let feats = try FeatDataViewModel.fromData(data)
-                var initials: Array<String> = []
-                for feat in feats {
-                    let initialLetter = String(feat.name.first!)
-                    if !initials.contains(initialLetter) {
-                        initials.append(initialLetter)
-                    }
-                }
-                self.featListInitals = initials
-                self.featList = feats
+                self.featDataViewModel = try FeatDataViewModel(withContext: container.viewContext, withJsonData: data)
+                
+                let feats = self.featDataViewModel?.loadFeatsFromDataModel(withPredicate: nil)
+                
+                self.featList = Dictionary(grouping: feats!, by: { String($0.name.first!) })
+                
+                self.featListInitials = Array(self.featList!.keys).sorted()
+
             } catch {
                 print(error)
             }
@@ -55,14 +63,12 @@ class FeatListViewController: UIViewController {
             if let selected = tableView.indexPathForSelectedRow {
                 if self.showFilteredList {
                     if let feat = self.filteredFeatList?[selected.row] {
-                        vc.sourceFeat = (feat.name, feat.shortDescription, feat.description, feat.prerequisites)
+                        vc.sourceFeat = feat
                     }
                 } else {
-                    if let key = self.featListInitals?[selected.section] {
-                        if let sectionIndex = self.featList?.firstIndex(where:)({ $0.name.hasPrefix(key) }) {
-                            if let feat = self.featList?[sectionIndex + selected.row] {
-                                vc.sourceFeat = (feat.name, feat.shortDescription, feat.description, feat.prerequisites)
-                            }
+                    if let sectionLetter = self.featListInitials?[selected.section] {
+                        if let feat = self.featList?[sectionLetter]?[selected.row] {
+                            vc.sourceFeat = feat
                         }
                     }
                 }
@@ -77,7 +83,7 @@ extension FeatListViewController: UITableViewDataSource {
         if self.showFilteredList {
             return nil
         } else {
-            return self.featListInitals ?? []
+            return self.featListInitials
         }
     }
     
@@ -85,21 +91,20 @@ extension FeatListViewController: UITableViewDataSource {
         if self.showFilteredList {
             return 1
         } else {
-            return self.featListInitals?.count ?? 0
+            return self.featListInitials?.count ?? 0
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.showFilteredList {
             return self.filteredFeatList?.count ?? 0
-        }
-        
-        if let key = self.featListInitals?[section] {
-            return self.featList?
-                .filter { $0.name.hasPrefix(key) }
-                .count ?? 0
         } else {
-            return 0
+            if let sectionLetter = self.featListInitials?[section],
+                let feat = self.featList?[sectionLetter] {
+                return feat.count
+            } else {
+                return 0
+            }
         }
     }
     
@@ -111,16 +116,14 @@ extension FeatListViewController: UITableViewDataSource {
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "featListCellPrototype") as! FeatListTableViewCell
         if self.showFilteredList {
             if let feat = self.filteredFeatList?[indexPath.row] {
-                cell.title = feat.name
-                cell.desc = feat.shortDescription
+                cell.title = "\(feat.name) (\(feat.type))"
+                cell.desc = feat.shortDesc
             }
         } else {
-            if let key = self.featListInitals?[indexPath.section] {
-                if let sectionIndex = self.featList?.firstIndex(where:)({ $0.name.hasPrefix(key) }) {
-                    if let feat = self.featList?[sectionIndex + indexPath.row] {
-                        cell.title = feat.name
-                        cell.desc = feat.shortDescription
-                    }
+            if let sectionLetter = self.featListInitials?[indexPath.section] {
+                if let feat = self.featList?[sectionLetter]?[indexPath.row] {
+                    cell.title = "\(feat.name) (\(feat.type))"
+                    cell.desc = feat.shortDesc
                 }
             }
         }
@@ -137,7 +140,7 @@ extension FeatListViewController: UITableViewDelegate {
 
 extension FeatListViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.showFilteredList = true
+        //self.showFilteredList = true
     }
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
@@ -146,6 +149,7 @@ extension FeatListViewController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.showFilteredList = false
+        self.dismissKeyboard()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -153,9 +157,19 @@ extension FeatListViewController: UISearchBarDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.filteredFeatList = self.featList?.filter {
+        guard let featList = self.featList else {
+            self.filteredFeatList = []
+            self.showFilteredList = false
+            self.tableView.reloadData()
+            return
+        }
+
+        self.filteredFeatList = Array(featList.values).reduce(into: [], { (acc, dataArray) in
+            acc.append(contentsOf: dataArray)
+        }).filter {
             $0.name.localizedCaseInsensitiveContains(searchText)
         }
+        
         if(self.filteredFeatList?.count == 0){
             self.showFilteredList = false
         } else {

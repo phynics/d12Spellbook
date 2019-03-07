@@ -12,8 +12,8 @@ struct FeatDataModelPfCommunity {
     var id: Int
     var name: String
     var type: String
-    var additionalTypes: [String]
-    var description: String
+    var additionalTypes: String
+    var shortDesc: String
     var prerequisites: String
     var prerequisiteFeats: String
     var prerequisiteSkills: String
@@ -32,7 +32,7 @@ struct FeatDataModelPfCommunity {
         case id
         case name
         case type
-        case description
+        case shortDesc = "description"
         case prerequisites
         case prerequisiteFeats = "prerequisite_feats"
         case prerequisiteSkills = "prerequisite_skills"
@@ -74,7 +74,7 @@ extension FeatDataModelPfCommunity: Decodable {
         id = try values.decode(Int.self, forKey:.id)
         name = try values.decode(String.self, forKey:.name)
         type = try values.decode(String.self, forKey:.type)
-        description = try values.decode(String.self, forKey:.description)
+        shortDesc = try values.decode(String.self, forKey:.shortDesc)
         prerequisites = try values.decode(String.self, forKey:.prerequisites)
         prerequisiteFeats = try values.decode(String.self, forKey:.prerequisiteFeats)
         prerequisiteSkills = try values.decode(String.self, forKey:.prerequisiteSkills)
@@ -89,60 +89,65 @@ extension FeatDataModelPfCommunity: Decodable {
         sourceName = try values.decode(String.self, forKey:.sourceName)
         fullText = try values.decode(String.self, forKey:.fullText)
         
-        additionalTypes = [String]()
+        var additionalTypesArray = [String]()
         if try values.decode(Int.self, forKey: .teamwork).asBool {
-            additionalTypes.append("Teamwork")
+            additionalTypesArray.append("Teamwork")
         }
         if try values.decode(Int.self, forKey: .critical).asBool {
-            additionalTypes.append("Critical")
+            additionalTypesArray.append("Critical")
         }
         if try values.decode(Int.self, forKey: .grit).asBool {
-            additionalTypes.append("Grit")
+            additionalTypesArray.append("Grit")
         }
         if try values.decode(Int.self, forKey: .style).asBool {
-            additionalTypes.append("Style")
+            additionalTypesArray.append("Style")
         }
         if try values.decode(Int.self, forKey: .performance).asBool {
-            additionalTypes.append("Performance")
+            additionalTypesArray.append("Performance")
         }
         if try values.decode(Int.self, forKey: .racial).asBool {
-            additionalTypes.append("Racial")
+            additionalTypesArray.append("Racial")
         }
         if try values.decode(Int.self, forKey: .companionOrFamiliar).asBool {
-            additionalTypes.append("Companion/Familiar")
+            additionalTypesArray.append("Companion/Familiar")
         }
         if try values.decode(Int.self, forKey: .panache).asBool {
-            additionalTypes.append("Panache")
+            additionalTypesArray.append("Panache")
         }
         if try values.decode(Int.self, forKey: .betrayal).asBool {
-            additionalTypes.append("Betrayal")
+            additionalTypesArray.append("Betrayal")
         }
         if try values.decode(Int.self, forKey: .targeting).asBool {
-            additionalTypes.append("Targeting")
+            additionalTypesArray.append("Targeting")
         }
         if try values.decode(Int.self, forKey: .esoteric).asBool {
-            additionalTypes.append("Esoteric")
+            additionalTypesArray.append("Esoteric")
         }
         if try values.decode(Int.self, forKey: .stare).asBool {
-            additionalTypes.append("Stare")
+            additionalTypesArray.append("Stare")
         }
         if try values.decode(Int.self, forKey: .weaponMastery).asBool {
-            additionalTypes.append("Weapon Mastery")
+            additionalTypesArray.append("Weapon Mastery")
         }
         if try values.decode(Int.self, forKey: .itemMastery).asBool {
-            additionalTypes.append("Item Mastery")
+            additionalTypesArray.append("Item Mastery")
         }
         if try values.decode(Int.self, forKey: .armorMastery).asBool {
-            additionalTypes.append("Armor Mastery")
+            additionalTypesArray.append("Armor Mastery")
         }
         if try values.decode(Int.self, forKey: .shieldMastery).asBool {
-            additionalTypes.append("Shield Mastery")
+            additionalTypesArray.append("Shield Mastery")
         }
         if try values.decode(Int.self, forKey: .bloodHex).asBool {
-            additionalTypes.append("Blood Hex")
+            additionalTypesArray.append("Blood Hex")
         }
         if try values.decode(Int.self, forKey: .trick).asBool {
-            additionalTypes.append("Trick")
+            additionalTypesArray.append("Trick")
         }
+        
+        additionalTypesArray.sort()
+        additionalTypes = additionalTypesArray.joined(separator: ", ")
     }
 }
+
+
