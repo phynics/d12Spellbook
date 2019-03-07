@@ -15,11 +15,13 @@ class FeatDataViewModel {
     init(withContext context: NSManagedObjectContext, withJsonData jsonData: Data?) throws {
         self.context = context
         
-        if let jsonData = jsonData {
-            let loadedFeats = try self._loadFeatsFrom(jsonData: jsonData)
-            loadedFeats.forEach { (loadedFeat) in
-                if loadFeatsFromDataModel(withPredicate: NSPredicate(format: "id == %d", loadedFeat.id)).count == 0 {
-                    addFeatToDataModel(loadedFeat)
+        if let jsonData = jsonData{
+            if loadFeatsFromDataModel(withPredicate: nil).count == 0 {
+                let loadedFeats = try self._loadFeatsFrom(jsonData: jsonData)
+                loadedFeats.forEach { (loadedFeat) in
+                    if loadFeatsFromDataModel(withPredicate: NSPredicate(format: "id == %d", loadedFeat.id)).count == 0 {
+                        addFeatToDataModel(loadedFeat)
+                    }
                 }
             }
         }
@@ -94,7 +96,10 @@ struct FeatData {
     let type: String
     let additionalTypes: String
     let multipleAllowed: Bool
-    
+
+}
+
+extension FeatData {
     var asDictionary: [String: Any] {
         return [
             "id": id,
@@ -114,25 +119,6 @@ struct FeatData {
         ]
     }
     
-    static func fromDictionary(_ dict: [String:Any]) -> FeatData {
-        return FeatData(id: dict["id"] as! Int,
-                        name: dict["name"] as! String,
-                        shortDesc: dict["shortDesc"] as! String,
-                        benefit: dict["benefit"] as! String,
-                        normal: dict["normal"] as! String,
-                        special: dict["special"] as! String,
-                        goal: dict["goal"] as! String,
-                        completionBenefit: dict["completionBenefit"] as! String,
-                        note: dict["note"] as! String,
-                        prerequisites: dict["prerequisites"] as! String,
-                        sourceName: dict["sourceName"] as! String,
-                        type: dict["type"] as! String,
-                        additionalTypes: dict["additionalTypes"] as! String,
-                        multipleAllowed: dict["multipleAllowed"] as! Bool)
-    }
-}
-
-extension FeatData {
     init(fromCoreDataCounterpart featEntity: FeatEntity) {
         self.id = Int(featEntity.id)
         self.name = featEntity.name!
