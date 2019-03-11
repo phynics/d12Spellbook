@@ -97,20 +97,50 @@
         <!--FeatFilterView-->
         <scene sceneID="7WW-Jz-EX9">
             <objects>
-                <viewController title="FeatFilterView" id="cH2-cw-5KK" sceneMemberID="viewController">
+                <viewController title="FeatFilterView" id="cH2-cw-5KK" customClass="FeatSourcePickerViewController" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="J4g-jf-wwm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="TSr-Ts-NCu">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="sourcePickerCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="sourcePickerCell" id="RGy-Jr-3zg" customClass="FeatSourceListTableViewCell" customModule="d12Spellbook" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RGy-Jr-3zg" id="9WM-tD-YiD">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Source Book Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rhP-v6-AtY">
+                                                    <rect key="frame" x="15" y="11.5" width="147" height="20.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="rhP-v6-AtY" firstAttribute="leading" secondItem="9WM-tD-YiD" secondAttribute="leadingMargin" id="CGP-gg-qgK"/>
+                                                <constraint firstItem="rhP-v6-AtY" firstAttribute="centerY" secondItem="9WM-tD-YiD" secondAttribute="centerY" id="nb0-mo-TVp"/>
+                                                <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="rhP-v6-AtY" secondAttribute="trailing" id="xv6-NG-UKY"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="nameLabel" destination="rhP-v6-AtY" id="Uou-gr-wDk"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
                             </tableView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a3j-CS-ujh">
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <items>
-                                    <navigationItem title="Title" id="VBC-R1-Vio">
-                                        <barButtonItem key="rightBarButtonItem" title="Done" id="vcx-9u-oHP"/>
+                                    <navigationItem title="Souce Books" id="VBC-R1-Vio">
+                                        <barButtonItem key="rightBarButtonItem" title="Done" id="vcx-9u-oHP">
+                                            <connections>
+                                                <action selector="dismissView:" destination="cH2-cw-5KK" id="UZc-wn-b1g"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -122,11 +152,14 @@
                             <constraint firstItem="jx1-SK-heQ" firstAttribute="bottom" secondItem="TSr-Ts-NCu" secondAttribute="bottom" id="fZi-4y-JWS"/>
                             <constraint firstItem="TSr-Ts-NCu" firstAttribute="leading" secondItem="jx1-SK-heQ" secondAttribute="leading" id="hxT-Co-wWg"/>
                             <constraint firstItem="a3j-CS-ujh" firstAttribute="trailing" secondItem="jx1-SK-heQ" secondAttribute="trailing" id="rme-zG-vT5"/>
-                            <constraint firstItem="TSr-Ts-NCu" firstAttribute="top" secondItem="a3j-CS-ujh" secondAttribute="top" id="rms-IA-wIo"/>
+                            <constraint firstItem="TSr-Ts-NCu" firstAttribute="top" secondItem="a3j-CS-ujh" secondAttribute="bottom" id="rms-IA-wIo"/>
                             <constraint firstItem="a3j-CS-ujh" firstAttribute="leading" secondItem="jx1-SK-heQ" secondAttribute="leading" id="vEJ-4N-DfP"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="jx1-SK-heQ"/>
                     </view>
+                    <connections>
+                        <outlet property="tableView" destination="TSr-Ts-NCu" id="DOu-NQ-SYQ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2lx-yj-aMq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

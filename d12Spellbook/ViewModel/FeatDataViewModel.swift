@@ -74,7 +74,7 @@ class FeatDataViewModel {
         nameText += " ("
         nameText += "\(self.sourceFeat.type)"
         if self.sourceFeat.additionalTypes.count != 0 {
-            nameText += "\(self.sourceFeat.additionalTypes)"
+            nameText += ", \(self.sourceFeat.additionalTypes)"
         }
         nameText += ")"
 
@@ -92,5 +92,9 @@ class FeatDataViewModel {
 
     var viewShortDescription: String {
         return self.sourceFeat.shortDesc
+    }
+    
+    var viewSourceName: String {
+        return self.sourceFeat.sourceName
     }
 }
