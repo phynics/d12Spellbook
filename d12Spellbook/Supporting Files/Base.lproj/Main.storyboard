@@ -75,21 +75,67 @@
                     </view>
                     <navigationItem key="navigationItem" title="All Feats" id="SY2-Af-ez1">
                         <barButtonItem key="backBarButtonItem" title="Back" id="kK2-nk-keR"/>
+                        <barButtonItem key="rightBarButtonItem" title="Filter" id="xl0-BX-LbN">
+                            <connections>
+                                <action selector="filterButtonPressed:" destination="BYZ-38-t0r" id="1L0-qG-L9v"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="searchBar" destination="O7e-sU-3eq" id="80A-kw-9qR"/>
                         <outlet property="tableView" destination="Zgt-Xd-afM" id="gVg-dt-Euv"/>
                         <segue destination="eBP-dt-HJ2" kind="show" identifier="showFeatDetail" id="j26-wD-rab"/>
+                        <segue destination="cH2-cw-5KK" kind="popoverPresentation" identifier="filterPopUp" popoverAnchorBarButtonItem="xl0-BX-LbN" id="mZ3-gy-TNN">
+                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                        </segue>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1076" y="133.5832083958021"/>
         </scene>
-        <!--Title-->
+        <!--FeatFilterView-->
+        <scene sceneID="7WW-Jz-EX9">
+            <objects>
+                <viewController title="FeatFilterView" id="cH2-cw-5KK" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="J4g-jf-wwm">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="TSr-Ts-NCu">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </tableView>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a3j-CS-ujh">
+                                <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                                <items>
+                                    <navigationItem title="Title" id="VBC-R1-Vio">
+                                        <barButtonItem key="rightBarButtonItem" title="Done" id="vcx-9u-oHP"/>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="jx1-SK-heQ" firstAttribute="trailing" secondItem="TSr-Ts-NCu" secondAttribute="trailing" id="8gn-id-0Y7"/>
+                            <constraint firstItem="a3j-CS-ujh" firstAttribute="top" secondItem="jx1-SK-heQ" secondAttribute="top" id="AZY-Fb-Ngb"/>
+                            <constraint firstItem="jx1-SK-heQ" firstAttribute="bottom" secondItem="TSr-Ts-NCu" secondAttribute="bottom" id="fZi-4y-JWS"/>
+                            <constraint firstItem="TSr-Ts-NCu" firstAttribute="leading" secondItem="jx1-SK-heQ" secondAttribute="leading" id="hxT-Co-wWg"/>
+                            <constraint firstItem="a3j-CS-ujh" firstAttribute="trailing" secondItem="jx1-SK-heQ" secondAttribute="trailing" id="rme-zG-vT5"/>
+                            <constraint firstItem="TSr-Ts-NCu" firstAttribute="top" secondItem="a3j-CS-ujh" secondAttribute="top" id="rms-IA-wIo"/>
+                            <constraint firstItem="a3j-CS-ujh" firstAttribute="leading" secondItem="jx1-SK-heQ" secondAttribute="leading" id="vEJ-4N-DfP"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="jx1-SK-heQ"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2lx-yj-aMq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1989.5999999999999" y="196.55172413793105"/>
+        </scene>
+        <!--FeatDetailView-->
         <scene sceneID="OW3-co-TCe">
             <objects>
-                <viewController id="eBP-dt-HJ2" customClass="FeatCardDetailViewController" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="FeatDetailView" id="eBP-dt-HJ2" customClass="FeatCardDetailViewController" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Mm9-tM-aGa">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -184,7 +230,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xmg-kE-DEU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2020" y="133.5832083958021"/>
+            <point key="canvasLocation" x="1991" y="-485"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="PiP-Gp-gr2">

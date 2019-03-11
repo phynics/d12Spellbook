@@ -6,133 +6,91 @@
 //  Copyright © 2019 atakan. All rights reserved.
 //
 
-import Foundation
-import CoreData
+import UIKit
 
 class FeatDataViewModel {
-    let context: NSManagedObjectContext
+    let sourceFeat: FeatDataModel
     
-    init(withContext context: NSManagedObjectContext, withJsonData jsonData: Data?) throws {
-        self.context = context
-        
-        if let jsonData = jsonData{
-            if loadFeatsFromDataModel(withPredicate: nil).count == 0 {
-                let loadedFeats = try self._loadFeatsFrom(jsonData: jsonData)
-                loadedFeats.forEach { (loadedFeat) in
-                    if loadFeatsFromDataModel(withPredicate: NSPredicate(format: "id == %d", loadedFeat.id)).count == 0 {
-                        addFeatToDataModel(loadedFeat)
-                    }
-                }
-            }
-        }
+    init(withModel feat: FeatDataModel) {
+        self.sourceFeat = feat
     }
     
-    private func _loadFeatsFrom(jsonData data: Data) throws -> [FeatData] {
-        let decoder = JSONDecoder()
-        let rawDecode = try decoder.decode([String:FeatDataModelPfCommunity].self, from: data)
-        let featList = Array(rawDecode.values).sorted(by: { (a, b) -> Bool in
-            return a.name.lexicographicallyPrecedes(b.name)
-        })
-        return featList.map { rawFeat in
-            return FeatData(
-                id: rawFeat.id,
-                name: rawFeat.name,
-                shortDesc: rawFeat.shortDesc,
-                benefit: rawFeat.benefit,
-                normal: rawFeat.normal,
-                special: rawFeat.special,
-                goal: rawFeat.goal,
-                completionBenefit: rawFeat.completionBenefit,
-                note: rawFeat.note,
-                prerequisites: rawFeat.prerequisites,
-                sourceName: rawFeat.sourceName,
-                type: rawFeat.type,
-                additionalTypes: rawFeat.additionalTypes,
-                multipleAllowed: rawFeat.multiplesAllowed
-            )
-        }
-    }
-    
-    func loadFeatsFromDataModel(withPredicate predicate: NSPredicate?) -> [FeatData] {
-        let featFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "FeatEntity")
-        
-        featFetch.predicate = predicate
-        featFetch.sortDescriptors = [NSSortDescriptor.init(key: "name", ascending: true)]
-        let feats = try! context.fetch(featFetch)
-        
-        return feats.map { $0 as! FeatEntity}
-            .map({ (item) in
-            return FeatData.init(fromCoreDataCounterpart: item)
-        })
-    }
-    
-    func addFeatToDataModel(_ feat: FeatData) {
-        let entity = NSEntityDescription.entity(forEntityName: "FeatEntity", in: self.context)!
-        let featEntity = NSManagedObject(entity: entity, insertInto: self.context)
-        
-        featEntity.setValuesForKeys(feat.asDictionary)
-        
-        do {
-            try context.save()
-        } catch {
-            print("Could not save. \(error)")
-        }
-    }
-    
-}
+    var viewDescription: NSAttributedString {
+        let fontAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
 
-struct FeatData {    
-    let id: Int
-    let name: String
-    let shortDesc: String
-    let benefit: String
-    let normal: String
-    let special: String
-    let goal: String
-    let completionBenefit: String
-    let note: String
-    let prerequisites: String
-    let sourceName: String
-    let type: String
-    let additionalTypes: String
-    let multipleAllowed: Bool
+        let benefitText = NSMutableAttributedString(string: "Benefit: ", attributes: fontAttributes)
+        let normalText = NSMutableAttributedString(string: "Normal: ", attributes: fontAttributes)
+        let specialText = NSMutableAttributedString(string: "Special: ", attributes: fontAttributes)
+        let goalText = NSMutableAttributedString(string: "Goal: ", attributes: fontAttributes)
+        let completionText = NSMutableAttributedString(string: "Completion Benefit: ", attributes: fontAttributes)
+        let noteText = NSMutableAttributedString(string: "Note: ", attributes: fontAttributes)
+        let sourceText = NSMutableAttributedString(string: "Source: ", attributes: fontAttributes)
+        let spacing = NSMutableAttributedString(string: "\n\n")
 
-}
+        let viewDescription = NSMutableAttributedString(string: "")
+        if(self.sourceFeat.benefit.count > 0) {
+            viewDescription.append(benefitText)
+            viewDescription.append(NSMutableAttributedString(string: self.sourceFeat.benefit))
+            viewDescription.append(spacing)
+        }
+        if(self.sourceFeat.normal.count > 0) {
+            viewDescription.append(normalText)
+            viewDescription.append(NSMutableAttributedString(string: self.sourceFeat.normal))
+            viewDescription.append(spacing)
+        }
+        if(self.sourceFeat.special.count > 0) {
+            viewDescription.append(specialText)
+            viewDescription.append(NSMutableAttributedString(string: self.sourceFeat.special))
+            viewDescription.append(spacing)
+        }
+        if(self.sourceFeat.goal.count > 0) {
+            viewDescription.append(goalText)
+            viewDescription.append(NSMutableAttributedString(string: self.sourceFeat.goal))
+            viewDescription.append(spacing)
+        }
+        if(self.sourceFeat.completionBenefit.count > 0) {
+            viewDescription.append(completionText)
+            viewDescription.append(NSMutableAttributedString(string: self.sourceFeat.completionBenefit))
+            viewDescription.append(spacing)
+        }
+        if(self.sourceFeat.note.count > 0) {
+            viewDescription.append(noteText)
+            viewDescription.append(NSMutableAttributedString(string: self.sourceFeat.note))
+            viewDescription.append(spacing)
+        }
 
-extension FeatData {
-    var asDictionary: [String: Any] {
-        return [
-            "id": id,
-            "name": name,
-            "shortDesc": shortDesc,
-            "benefit": benefit,
-            "normal": normal,
-            "special": special,
-            "goal": goal,
-            "completionBenefit": completionBenefit,
-            "note": note,
-            "prerequisites": prerequisites,
-            "sourceName": sourceName,
-            "type": type,
-            "additionalTypes": additionalTypes,
-            "multipleAllowed": multipleAllowed
-        ]
+        viewDescription.append(sourceText)
+        viewDescription.append(NSMutableAttributedString(string: self.sourceFeat.sourceName))
+
+        return viewDescription
     }
     
-    init(fromCoreDataCounterpart featEntity: FeatEntity) {
-        self.id = Int(featEntity.id)
-        self.name = featEntity.name!
-        self.shortDesc = featEntity.shortDesc!
-        self.benefit = featEntity.benefit!
-        self.normal = featEntity.normal!
-        self.special = featEntity.special!
-        self.goal = featEntity.goal!
-        self.completionBenefit = featEntity.completionBenefit!
-        self.note = featEntity.note!
-        self.prerequisites = featEntity.prerequisites!
-        self.sourceName = featEntity.sourceName!
-        self.type = featEntity.type!
-        self.additionalTypes = featEntity.additionalTypes!
-        self.multipleAllowed = featEntity.multipleAllowed
+    var viewName: String {
+        return self.sourceFeat.name
+    }
+
+    var viewNameWithTypes: String {
+        var nameText = "\(self.viewName)"
+        nameText += " ("
+        nameText += "\(self.sourceFeat.type)"
+        if self.sourceFeat.additionalTypes.count != 0 {
+            nameText += ",\(self.sourceFeat.additionalTypes)"
+        }
+        nameText += ")"
+
+        return nameText
+    }
+
+    var viewPrerequisites: NSAttributedString {
+        let fontAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
+
+        let prerequisitesText = NSMutableAttributedString(string: "Prerequisites: ", attributes: fontAttributes)
+        prerequisitesText.append(NSMutableAttributedString(string: self.sourceFeat.prerequisites))
+        
+        return prerequisitesText
+    }
+
+    var viewShortDescription: String {
+        return self.sourceFeat.shortDesc
     }
 }
