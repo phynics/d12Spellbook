@@ -69,14 +69,14 @@ class FeatListViewController: UIViewController {
     }
     
     func loadFeatList(bySource sources: [FeatSourceStatus]) {
+        let pickedSources = sources.filter { $0.picked }
+            .map { $0.name }
         
-        if sources.count == 0 {
+        if pickedSources.count == 0 {
             return
         }
         
         var predicateString = "sourceName = %@"
-        let pickedSources = sources.filter { $0.picked }
-            .map { $0.name }
         
         for _ in 1..<pickedSources.count {
             predicateString += "OR sourceName = %@"
