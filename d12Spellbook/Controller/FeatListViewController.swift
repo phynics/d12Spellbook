@@ -157,7 +157,7 @@ extension FeatListViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 64.0
+        return 56.0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -185,15 +185,6 @@ extension FeatListViewController: UITableViewDelegate {
 }
 
 extension FeatListViewController: UISearchBarDelegate {
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        //self.showFilteredList = true
-    }
-
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        self.showFilteredList = false
-        tableView.reloadData()
-    }
-
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.showFilteredList = false
         self.dismissKeyboard()

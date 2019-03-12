@@ -19,8 +19,8 @@ class FeatListTableViewCell: UITableViewCell {
             return self._sourceFeat
         }
         set {
-            self.titleLabel.text = newValue?.viewNameWithTypes
-            self.descriptionLabel.text = newValue?.viewShortDescription
+            self.titleLabel.text = newValue?.viewName
+            self.descriptionLabel.text = newValue?.viewTypes
             self._sourceFeat = newValue
         }
     }
