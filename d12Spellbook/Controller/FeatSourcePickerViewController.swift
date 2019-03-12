@@ -14,35 +14,42 @@ class FeatSourcePickerViewController: UIViewController {
     
     var sourceDelegate: FeatSourcePickerDelegate?
     
+    var sourceList: [FeatListViewController.FeatSourceUse]?
+    
     override func viewDidLoad() {
+        sourceList = sourceDelegate?.retrieveSourceState()
+        
         tableView.delegate = self
         tableView.dataSource = self
     }
     
     @IBAction func dismissView(_ sender: Any) {
+        if let sourceList = self.sourceList {
+            sourceDelegate?.lastSourceState(sourceList)
+        }
         self.dismiss(animated: true)
     }
-}
-
-protocol FeatSourcePickerDelegate {
-    func numberOfSources() -> Int
-    func sourceAtIndex(index: Int) -> (name: String, picked: Bool)
-    func changed(atIndex: Int)
+    
+    func toggleSourceState(_ index: Int) {
+        if let item = sourceList?[index] {
+            sourceList![index] = (name: item.name, picked: !item.picked)
+        }
+    }
 }
 
 extension FeatSourcePickerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sourceDelegate?.numberOfSources() ?? 0
+        return sourceList?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = self.tableView.dequeueReusableCell(withIdentifier: "sourcePickerCell")
-        if let cell = cell as? FeatSourceListTableViewCell {
-            let cellData = self.sourceDelegate?.sourceAtIndex(index: indexPath.row)
-            cell.name = cellData?.name
-            cell.enabled = cellData?.picked
-        }
-        return cell!
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: "sourcePickerCell") as! FeatSourceListTableViewCell
+        
+        let cellData = sourceList?[indexPath.row]
+        cell.name = cellData?.name
+        cell.enabled = cellData?.picked
+        
+        return cell
     }
     
     
@@ -50,7 +57,13 @@ extension FeatSourcePickerViewController: UITableViewDataSource {
 
 extension FeatSourcePickerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.sourceDelegate?.changed(atIndex: indexPath.row)
-        self.tableView.reloadData()
+        toggleSourceState(indexPath.row)
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
+}
+
+
+protocol FeatSourcePickerDelegate {
+    func lastSourceState(_: [FeatListViewController.FeatSourceUse])
+    func retrieveSourceState() -> [FeatListViewController.FeatSourceUse]?
 }

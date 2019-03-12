@@ -15,10 +15,10 @@ class FeatSourceListTableViewCell: UITableViewCell {
     var enabled: Bool? = true {
         didSet {
             if let enabled = enabled,
-                !enabled {
-                self.accessoryType = .none
-            } else {
+                enabled {
                 self.accessoryType = .checkmark
+            } else {
+                self.accessoryType = .none
             }
         }
     }

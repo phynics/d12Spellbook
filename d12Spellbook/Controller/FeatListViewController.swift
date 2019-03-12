@@ -21,11 +21,17 @@ class FeatListViewController: UIViewController {
     var featList: [String: [FeatDataViewModel]]?
     var featListInitials: [String]?
 
-    typealias FeatSourceStatus = (name: String, picked: Bool)
-    var featSources: [FeatSourceStatus]?
+    typealias FeatSourceUse = (name: String, picked: Bool)
+    var featSources: [FeatSourceUse]? {
+        didSet {
+            reloadFeatData()
+        }
+    }
 
     var showFilteredList = false
     var filteredFeatList: [FeatDataViewModel]?
+
+    let jsonDataSourceName = "FeatsPathfinderCommunity221118"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,64 +39,68 @@ class FeatListViewController: UIViewController {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.container = appDelegate.persistentContainer
 
-        _loadFeatList()
-        hideKeyboardOnTouch()
+        self.featDataController = try! FeatDataController(withContext: container.viewContext)
+        _setupFeatData()
 
         tableView.delegate = self
         tableView.dataSource = self
 
         searchBar.delegate = self
+
+        hideKeyboardOnTouch()
     }
 
     @IBAction func filterButtonPressed(_ sender: Any) {
         self.performSegue(withIdentifier: "filterPopUp", sender: self)
     }
 
-    private func _loadFeatList() {
-        let resourceName = "FeatsPathfinderCommunity221118"
-        if let path = Bundle.main.url(forResource: resourceName, withExtension: "json") {
+    private func _setupFeatData() {
+        if let path = Bundle.main.url(forResource: jsonDataSourceName, withExtension: "json") {
             do {
-                let data = try Data(contentsOf: path)
-                self.featDataController = try FeatDataController(withContext: container.viewContext, withJsonData: data)
-                let feats = self.featDataController?.fetchFeatsFromDataModel(withPredicate: nil)
-
-                self.featList = Dictionary(grouping: feats!, by: { String($0.viewName.first!) })
-
-                self.featListInitials = Array(self.featList!.keys).sorted()
                 
-                self.featSources = self.featDataController?
-                    .fetchSources()
-                    .map { (name: $0, picked: true) }
+                let data = try Data(contentsOf: path)
+                self.featDataController?.loadFeatDataFrom(json: data)
+
+                let featSourcesSorted = self.featDataController?.fetchAvailableFeatSources()
+                    .sorted(by:) { a, b -> Bool in
+                        if a.contains("PFRPG"), !b.contains("PFRPG") {
+                            return true
+                        } else if !a.contains("PFRPG"), b.contains("PFRPG") {
+                            return false
+                        } else if a.hasPrefix("AP"), !b.hasPrefix("AP") {
+                            return false
+                        } else if !a.hasPrefix("AP"), b.hasPrefix("AP") {
+                            return true
+                        } else {
+                            return a.lexicographicallyPrecedes(b)
+                        }
+                }
+
+                self.featSources = featSourcesSorted?.map({ (featSourceName) -> FeatSourceUse in
+                    return (name: featSourceName, picked: true)
+                })
 
             } catch {
                 print(error)
             }
         }
     }
-    
-    func loadFeatList(bySource sources: [FeatSourceStatus]) {
-        let pickedSources = sources.filter { $0.picked }
-            .map { $0.name }
-        
-        if pickedSources.count == 0 {
-            return
-        }
-        
-        var predicateString = "sourceName = %@"
-        
-        for _ in 1..<pickedSources.count {
-            predicateString += "OR sourceName = %@"
-        }
-        
-        let predicate = NSPredicate(format: predicateString, argumentArray: pickedSources)
-        
-        
-        let feats = self.featDataController!
-            .fetchFeatsFromDataModel(withPredicate: predicate)
-        self.featList = Dictionary(grouping: feats, by: { String($0.viewName.first!) })
-        
-        
-        self.tableView.reloadData()
+
+    func reloadFeatData() {
+        let pickedSouces = self.featSources!
+            .filter({ (source) -> Bool in
+                return source.picked
+            })
+            .map({ (source) -> String in
+                return source.name
+
+            })
+
+        let feats = self.featDataController?.fetchFeats(fromSources: pickedSouces)
+
+        self.featList = Dictionary(grouping: feats!, by: { String($0.viewName.first!) })
+
+        self.featListInitials = Array(self.featList!.keys).sorted()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -109,7 +119,7 @@ class FeatListViewController: UIViewController {
                 }
             }
         }
-        
+
         if let vc = segue.destination as? FeatSourcePickerViewController {
             vc.sourceDelegate = self
         }
@@ -221,20 +231,12 @@ extension FeatListViewController: UISearchBarDelegate {
 }
 
 extension FeatListViewController: FeatSourcePickerDelegate {
-    func numberOfSources() -> Int {
-        return self.featSources?.count ?? 0
+    func lastSourceState(_ sources: [FeatListViewController.FeatSourceUse]) {
+        self.featSources = sources
     }
     
-    func sourceAtIndex(index: Int) -> (name: String, picked: Bool) {
-        return self.featSources![index]
+    func retrieveSourceState() -> [FeatListViewController.FeatSourceUse]? {
+        return self.featSources
     }
     
-    func changed(atIndex index: Int) {
-        if var featSources = self.featSources {
-            featSources[index].picked = !featSources[index].picked
-            self.featSources = featSources
-            
-            self.loadFeatList(bySource: featSources)
-        }
-    }
 }
