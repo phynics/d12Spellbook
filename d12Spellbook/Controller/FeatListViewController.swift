@@ -95,12 +95,10 @@ class FeatListViewController: UIViewController {
                 return source.name
 
             })
-
         let feats = self.featDataController?.fetchFeats(fromSources: pickedSouces)
-
         self.featList = Dictionary(grouping: feats!, by: { String($0.viewName.first!) })
-
         self.featListInitials = Array(self.featList!.keys).sorted()
+        tableView.reloadData()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

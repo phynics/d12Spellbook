@@ -67,6 +67,10 @@ class FeatDataController {
     }
     
     func fetchFeats(fromSources sources: [String]) -> [FeatDataViewModel] {
+        if sources.count == 0 {
+            return []
+        }
+        
         let predicateString =  sources.map { _ in "sourceName = %@" }
                 .joined(separator: " OR ")
         let predicate = NSPredicate(format: predicateString, argumentArray: sources)
