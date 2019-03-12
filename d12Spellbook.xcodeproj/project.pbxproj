@@ -18,6 +18,7 @@
 		7DA3CB4B2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3CB4A2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift */; };
 		7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */; };
 		7DC54B092233E7D900E2610A /* FeatDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC54B082233E7D900E2610A /* FeatDataController.swift */; };
+		7DCCABDF22385F20007C7E1F /* Sequence+Unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCABDE22385F20007C7E1F /* Sequence+Unique.swift */; };
 		7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AB22249A1400722982 /* AppDelegate.swift */; };
 		7DCCD4AE22249A1400722982 /* FeatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AD22249A1400722982 /* FeatListViewController.swift */; };
 		7DCCD4B122249A1400722982 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AF22249A1400722982 /* Main.storyboard */; };
@@ -38,6 +39,7 @@
 		7DA3CB4A2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+hideKeyboardOnTouch.swift"; sourceTree = "<group>"; };
 		7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatCardDetailViewController.swift; sourceTree = "<group>"; };
 		7DC54B082233E7D900E2610A /* FeatDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataController.swift; sourceTree = "<group>"; };
+		7DCCABDE22385F20007C7E1F /* Sequence+Unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+Unique.swift"; sourceTree = "<group>"; };
 		7DCCD4A822249A1400722982 /* d12Spellbook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = d12Spellbook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DCCD4AB22249A1400722982 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7DCCD4AD22249A1400722982 /* FeatListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatListViewController.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				7D075B7C222A06350078D4BF /* Int+asBool.swift */,
+				7DCCABDE22385F20007C7E1F /* Sequence+Unique.swift */,
 				7DA3CB4A2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift */,
 			);
 			path = Utilities;
@@ -229,6 +232,7 @@
 				7DA3CB4B2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift in Sources */,
 				7D8C0B9A222F340A000CA55E /* FeatDataModel.xcdatamodeld in Sources */,
 				7DC54B092233E7D900E2610A /* FeatDataController.swift in Sources */,
+				7DCCABDF22385F20007C7E1F /* Sequence+Unique.swift in Sources */,
 				7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */,
 				7D5E31492236FCA300EDB101 /* FeatSourcePickerViewController.swift in Sources */,
 				7D075B83222C3FE60078D4BF /* FeatDataModelPfCommunity.swift in Sources */,

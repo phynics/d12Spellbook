@@ -12,6 +12,39 @@ import CoreData
 class FeatDataController {
     let context: NSManagedObjectContext
 
+    lazy var featList: [FeatDataModel] = self._fetchFeatsFromDataModel(withPredicate: nil)
+    
+    lazy var availableFeatSources: [String] = {
+        return featList
+            .map { $0.sourceName }
+            .unique()
+    }()
+    
+    lazy var availableFeatTypes: [String] = {
+        return featList
+            .map { feat -> [String] in
+                var types: [String] = [feat.type]
+                let additionalTypes = feat.additionalTypes
+                    .split(separator: ",")
+                    .map({ (substr) -> String in
+                        if substr.hasPrefix(" ") {
+                            return String(substr.dropFirst())
+                        } else {
+                            return String(substr)
+                        }
+                    })
+                types.append(contentsOf: additionalTypes)
+                return types
+            }
+            .reduce([String]()
+                    , { (acc, next) -> [String] in
+                        var result = acc
+                        result.append(contentsOf: next)
+                        return result
+                    })
+            .unique()
+    }()
+
     init(withContext context: NSManagedObjectContext) throws {
         self.context = context
     }
@@ -19,17 +52,17 @@ class FeatDataController {
     func loadFeatDataFrom(json: Data, force: Bool = false) {
         do {
             let loadedFeats = try _decodeFromJsonData(jsonData: json)
-            
+
             if !force {
                 let checkCount = _fetchFeatsFromDataModel(withPredicate: nil).count
                 if checkCount > 42 {
                     return
                 }
             }
-            
+
             loadedFeats.forEach { (loadedFeat) in
                 if fetchFeatBy(id: loadedFeat.id) == nil {
-                    addFeatToDataModel(loadedFeat)
+                    _addFeatToDataModel(loadedFeat)
                 }
             }
         } catch {
@@ -37,46 +70,38 @@ class FeatDataController {
         }
     }
 
-    func fetchAvailableFeatSources() -> [String] {
-        return _fetchFeatsFromDataModel(withPredicate: nil)
-            .map { $0.sourceName }
-            .reduce ([String]()) { acc, item -> [String] in
-                var result = acc
-                if !acc.contains(where: { $0 == item }) {
-                    result.append(item)
-                }
-                return result
-        }
-    }
-
     func fetchFeatBy(id: Int) -> FeatDataViewModel? {
-        return _fetchFeatsFromDataModel(withPredicate: NSPredicate(format: "id == %d", id))
+        return featList.filter { $0.id == id }
             .map { FeatDataViewModel(withModel: $0) }
             .first
     }
 
-    func addFeatToDataModel(_ feat: FeatDataModelPfCommunity) {
-        let featEntity = FeatDataModel(context: self.context)
-        featEntity.copyDataFrom(jsonMode: feat)
+    func fetchFeats(fromSources sources: [String]?, withTypes types: [String]?) -> [FeatDataViewModel] {
+        var filteredFeats = featList
 
-        do {
-            try context.save()
-        } catch {
-            print("Could not save. \(error)")
+        if let sources = sources {
+            filteredFeats = filteredFeats.filter { sources.contains($0.sourceName) }
         }
+        if let types = types {
+            filteredFeats = filteredFeats.filter { feat in
+                if types.contains(feat.type) {
+                    return true
+                } else {
+                    return types.contains(where: { (type) -> Bool in
+                        feat.additionalTypes.contains(type)
+                    })
+                }
+            }
+        }
+        return filteredFeats.map { FeatDataViewModel(withModel: $0) }
     }
-    
+
     func fetchFeats(fromSources sources: [String]) -> [FeatDataViewModel] {
         if sources.count == 0 {
             return []
         }
-        
-        let predicateString =  sources.map { _ in "sourceName = %@" }
-                .joined(separator: " OR ")
-        let predicate = NSPredicate(format: predicateString, argumentArray: sources)
-        
-        
-        return _fetchFeatsFromDataModel(withPredicate: predicate)
+
+        return featList.filter { sources.contains($0.sourceName) }
             .map { FeatDataViewModel(withModel: $0) }
     }
 
@@ -98,5 +123,16 @@ class FeatDataController {
             return a.name.lexicographicallyPrecedes(b.name)
         })
         return featList
+    }
+
+    private func _addFeatToDataModel(_ feat: FeatDataModelPfCommunity) {
+        let featEntity = FeatDataModel(context: self.context)
+        featEntity.copyDataFrom(jsonMode: feat)
+
+        do {
+            try context.save()
+        } catch {
+            print("Could not save. \(error)")
+        }
     }
 }

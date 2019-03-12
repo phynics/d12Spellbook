@@ -61,7 +61,7 @@ class FeatListViewController: UIViewController {
                 let data = try Data(contentsOf: path)
                 self.featDataController?.loadFeatDataFrom(json: data)
 
-                let featSourcesSorted = self.featDataController?.fetchAvailableFeatSources()
+                let featSourcesSorted = self.featDataController?.availableFeatSources
                     .sorted(by:) { a, b -> Bool in
                         if a.contains("PFRPG"), !b.contains("PFRPG") {
                             return true

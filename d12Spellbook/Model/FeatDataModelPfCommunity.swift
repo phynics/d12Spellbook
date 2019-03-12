@@ -71,7 +71,7 @@ struct FeatDataModelPfCommunity: Codable {
             }
 
             if racial.asBool {
-                adTypes.append("racial")
+                adTypes.append("Racial")
             }
 
             if companionFamiliar.asBool {
