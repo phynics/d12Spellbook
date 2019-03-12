@@ -9,13 +9,34 @@
 import UIKit
 
 class FeatDataViewModel {
-    private let _sourceFeat: FeatDataModel
+    private(set) var viewDescription: NSAttributedString = NSAttributedString()
+    private(set) var viewName: String = ""
+    private(set) var viewPrerequisites: NSAttributedString = NSAttributedString()
+    private(set) var viewSourceName: String = ""
+    private(set) var viewShortDescription: String = ""
+    private(set) var viewTypes: String = ""
     
-    init(withModel feat: FeatDataModel) {
-        self._sourceFeat = feat
+    var viewNameWithTypes: String {
+        var nameText = "\(viewName)"
+        nameText += " ("
+        nameText += "\(viewTypes)"
+        nameText += ")"
+        
+        return nameText
+        
     }
     
-    var viewDescription: NSAttributedString {
+    init(withModel feat: FeatDataModel) {
+        self.viewDescription = generateViewDescription(feat: feat)
+        self.viewName = generateViewName(feat: feat)
+        self.viewPrerequisites = generateViewPrerequisites(feat: feat)
+        self.viewSourceName = generateViewSourceName(feat: feat)
+        self.viewShortDescription = generateViewShortDescription(feat: feat)
+        self.viewTypes = generateViewTypes(feat: feat)
+    }
+    
+    
+    func generateViewDescription(feat: FeatDataModel) -> NSAttributedString {
         let fontAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
 
         let benefitText = NSMutableAttributedString(string: "Benefit: ", attributes: fontAttributes)
@@ -28,73 +49,69 @@ class FeatDataViewModel {
         let spacing = NSMutableAttributedString(string: "\n\n")
 
         let viewDescription = NSMutableAttributedString(string: "")
-        if(self._sourceFeat.benefit.count > 0) {
+        if(feat.benefit.count > 0) {
             viewDescription.append(benefitText)
-            viewDescription.append(NSMutableAttributedString(string: self._sourceFeat.benefit))
+            viewDescription.append(NSMutableAttributedString(string: feat.benefit))
             viewDescription.append(spacing)
         }
-        if(self._sourceFeat.normal.count > 0) {
+        if(feat.normal.count > 0) {
             viewDescription.append(normalText)
-            viewDescription.append(NSMutableAttributedString(string: self._sourceFeat.normal))
+            viewDescription.append(NSMutableAttributedString(string: feat.normal))
             viewDescription.append(spacing)
         }
-        if(self._sourceFeat.special.count > 0) {
+        if(feat.special.count > 0) {
             viewDescription.append(specialText)
-            viewDescription.append(NSMutableAttributedString(string: self._sourceFeat.special))
+            viewDescription.append(NSMutableAttributedString(string: feat.special))
             viewDescription.append(spacing)
         }
-        if(self._sourceFeat.goal.count > 0) {
+        if(feat.goal.count > 0) {
             viewDescription.append(goalText)
-            viewDescription.append(NSMutableAttributedString(string: self._sourceFeat.goal))
+            viewDescription.append(NSMutableAttributedString(string: feat.goal))
             viewDescription.append(spacing)
         }
-        if(self._sourceFeat.completionBenefit.count > 0) {
+        if(feat.completionBenefit.count > 0) {
             viewDescription.append(completionText)
-            viewDescription.append(NSMutableAttributedString(string: self._sourceFeat.completionBenefit))
+            viewDescription.append(NSMutableAttributedString(string: feat.completionBenefit))
             viewDescription.append(spacing)
         }
-        if(self._sourceFeat.note.count > 0) {
+        if(feat.note.count > 0) {
             viewDescription.append(noteText)
-            viewDescription.append(NSMutableAttributedString(string: self._sourceFeat.note))
+            viewDescription.append(NSMutableAttributedString(string: feat.note))
             viewDescription.append(spacing)
         }
 
         viewDescription.append(sourceText)
-        viewDescription.append(NSMutableAttributedString(string: self._sourceFeat.sourceName))
+        viewDescription.append(NSMutableAttributedString(string: feat.sourceName))
 
         return viewDescription
     }
     
-    var viewName: String {
-        return self._sourceFeat.name
+    func generateViewName(feat: FeatDataModel) -> String {
+        return feat.name
     }
 
-    var viewNameWithTypes: String {
-        var nameText = "\(self.viewName)"
-        nameText += " ("
-        nameText += "\(self._sourceFeat.type)"
-        if self._sourceFeat.additionalTypes.count != 0 {
-            nameText += ", \(self._sourceFeat.additionalTypes)"
-        }
-        nameText += ")"
-
-        return nameText
-    }
-
-    var viewPrerequisites: NSAttributedString {
+    func generateViewPrerequisites(feat: FeatDataModel) -> NSAttributedString {
         let fontAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
 
         let prerequisitesText = NSMutableAttributedString(string: "Prerequisites: ", attributes: fontAttributes)
-        prerequisitesText.append(NSMutableAttributedString(string: self._sourceFeat.prerequisites))
+        prerequisitesText.append(NSMutableAttributedString(string: feat.prerequisites))
         
         return prerequisitesText
     }
 
-    var viewShortDescription: String {
-        return self._sourceFeat.shortDesc
+    func generateViewShortDescription(feat: FeatDataModel) -> String {
+        return feat.shortDesc
     }
     
-    var viewSourceName: String {
-        return self._sourceFeat.sourceName
+    func generateViewSourceName(feat: FeatDataModel) -> String {
+        return feat.sourceName
+    }
+    
+    func generateViewTypes(feat: FeatDataModel) -> String {
+        var typeText = "\(feat.type)"
+        if feat.additionalTypes.count != 0 {
+            typeText += ", \(feat.additionalTypes)"
+        }
+        return typeText
     }
 }
