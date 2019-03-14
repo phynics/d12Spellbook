@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "d12Spellbook::d12Spellbook"
-               BuildableName = "d12Spellbook.framework"
+               BlueprintIdentifier = "7DCCD4A722249A1400722982"
+               BuildableName = "d12Spellbook.app"
                BlueprintName = "d12Spellbook"
                ReferencedContainer = "container:d12Spellbook.xcodeproj">
             </BuildableReference>
@@ -32,8 +32,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "d12Spellbook::d12Spellbook"
-            BuildableName = "d12Spellbook.framework"
+            BlueprintIdentifier = "7DCCD4A722249A1400722982"
+            BuildableName = "d12Spellbook.app"
             BlueprintName = "d12Spellbook"
             ReferencedContainer = "container:d12Spellbook.xcodeproj">
          </BuildableReference>
@@ -55,8 +55,8 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "d12Spellbook::d12Spellbook"
-            BuildableName = "d12Spellbook.framework"
+            BlueprintIdentifier = "7DCCD4A722249A1400722982"
+            BuildableName = "d12Spellbook.app"
             BlueprintName = "d12Spellbook"
             ReferencedContainer = "container:d12Spellbook.xcodeproj">
          </BuildableReference>
@@ -74,8 +74,8 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "d12Spellbook::d12Spellbook"
-            BuildableName = "d12Spellbook.framework"
+            BlueprintIdentifier = "7DCCD4A722249A1400722982"
+            BuildableName = "d12Spellbook.app"
             BlueprintName = "d12Spellbook"
             ReferencedContainer = "container:d12Spellbook.xcodeproj">
          </BuildableReference>
