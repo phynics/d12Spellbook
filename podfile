@@ -1,0 +1,9 @@
+platform :ios, '10.0'
+use_frameworks!
+
+target 'd12Spellbook' do
+    pod 'CoreStore'
+    pod 'RxSwift'
+    pod 'RxCocoa'
+    pod 'PureLayout'
+end
