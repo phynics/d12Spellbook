@@ -23,17 +23,18 @@ class FeatDataController {
     lazy var availableFeatTypes: [String] = {
         return featList
             .map { feat -> [String] in
-                var types: [String] = [feat.type]
+                var types: [String] = [feat.type.capitalizingFirstLetter()]
                 let additionalTypes = feat.additionalTypes
                     .split(separator: ",")
                     .map({ (substr) -> String in
                         if substr.hasPrefix(" ") {
-                            return String(substr.dropFirst())
+                            return String(substr.dropFirst()).capitalizingFirstLetter()
                         } else {
-                            return String(substr)
+                            return String(substr).capitalizingFirstLetter()
                         }
                     })
                 types.append(contentsOf: additionalTypes)
+                print(types)
                 return types
             }
             .reduce([String]()
@@ -94,15 +95,6 @@ class FeatDataController {
             }
         }
         return filteredFeats.map { FeatDataViewModel(withModel: $0) }
-    }
-
-    func fetchFeats(fromSources sources: [String]) -> [FeatDataViewModel] {
-        if sources.count == 0 {
-            return []
-        }
-
-        return featList.filter { sources.contains($0.sourceName) }
-            .map { FeatDataViewModel(withModel: $0) }
     }
 
     private func _fetchFeatsFromDataModel(withPredicate predicate: NSPredicate?) -> [FeatDataModel] {

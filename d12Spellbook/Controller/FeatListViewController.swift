@@ -21,12 +21,10 @@ class FeatListViewController: UIViewController {
     var featList: [String: [FeatDataViewModel]]?
     var featListInitials: [String]?
 
-    typealias FeatSourceUse = (name: String, picked: Bool)
-    var featSources: [FeatSourceUse]? {
-        didSet {
-            reloadFeatData()
-        }
-    }
+    typealias FeatToggle = (name: String, picked: Bool)
+    
+    var featSources: [FeatToggle]?
+    var featTypes: [FeatToggle]?
 
     var showFilteredList = false
     var filteredFeatList: [FeatDataViewModel]?
@@ -76,10 +74,16 @@ class FeatListViewController: UIViewController {
                         }
                 }
 
-                self.featSources = featSourcesSorted?.map({ (featSourceName) -> FeatSourceUse in
+                self.featSources = featSourcesSorted?.map({ (featSourceName) -> FeatToggle in
                     return (name: featSourceName, picked: true)
                 })
-
+                
+                self.featTypes = self.featDataController?
+                        .availableFeatTypes
+                        .map({ (featTypeName) -> FeatToggle in
+                        return (name: featTypeName, picked: true)
+                    })
+                reloadFeatData()
             } catch {
                 print(error)
             }
@@ -87,15 +91,24 @@ class FeatListViewController: UIViewController {
     }
 
     func reloadFeatData() {
-        let pickedSouces = self.featSources!
+        let pickedSources = self.featSources!
             .filter({ (source) -> Bool in
                 return source.picked
             })
             .map({ (source) -> String in
                 return source.name
-
+                
             })
-        let feats = self.featDataController?.fetchFeats(fromSources: pickedSouces)
+        
+        let pickedTypes = self.featTypes!
+            .filter({ (source) -> Bool in
+                return source.picked
+            })
+            .map({ (source) -> String in
+                return source.name
+                
+            })
+        let feats = self.featDataController?.fetchFeats(fromSources: pickedSources, withTypes: pickedTypes)
         self.featList = Dictionary(grouping: feats!, by: { String($0.viewName.first!) })
         self.featListInitials = Array(self.featList!.keys).sorted()
         tableView.reloadData()
@@ -220,12 +233,19 @@ extension FeatListViewController: UISearchBarDelegate {
 }
 
 extension FeatListViewController: FeatSourcePickerDelegate {
-    func lastSourceState(_ sources: [FeatListViewController.FeatSourceUse]) {
+    func lastState(types: [FeatListViewController.FeatToggle], sources: [FeatListViewController.FeatToggle]) {
         self.featSources = sources
+        self.featTypes = types
+        
+        reloadFeatData()
     }
     
-    func retrieveSourceState() -> [FeatListViewController.FeatSourceUse]? {
+    func retrieveSourceState() -> [FeatListViewController.FeatToggle]? {
         return self.featSources
+    }
+    
+    func retrieveTypeState() -> [FeatListViewController.FeatToggle]? {
+        return self.featTypes
     }
     
 }

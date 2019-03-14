@@ -6,11 +6,11 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "d12Spellbook/Controller/FeatDataController.swift"
-            timestampString = "574121558.513353"
+            timestampString = "574216784.470343"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "23"
@@ -19,14 +19,14 @@
             landmarkType = "24">
             <Locations>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "d12Spellbook.FeatDataController.availableFeatTypes.getter : Swift.Array&lt;Swift.String&gt;"
                   moduleName = "d12Spellbook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/atakan/Developer/XCode/FeatList/d12Spellbook/Controller/FeatDataController.swift"
-                  timestampString = "574121558.6168081"
+                  timestampString = "574215009.062631"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "23"
@@ -34,14 +34,14 @@
                   offsetFromSymbolStart = "140">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "closure #1 () -&gt; Swift.Array&lt;Swift.String&gt; in d12Spellbook.FeatDataController.availableFeatTypes.getter : Swift.Array&lt;Swift.String&gt;"
                   moduleName = "d12Spellbook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/atakan/Developer/XCode/FeatList/d12Spellbook/Controller/FeatDataController.swift"
-                  timestampString = "574121558.6184779"
+                  timestampString = "574215009.0644701"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "24"
@@ -49,14 +49,14 @@
                   offsetFromSymbolStart = "36">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "d12Spellbook.FeatDataController.availableFeatTypes.setter : Swift.Array&lt;Swift.String&gt;"
                   moduleName = "d12Spellbook"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/atakan/Developer/XCode/FeatList/d12Spellbook/Controller/FeatDataController.swift"
-                  timestampString = "574121558.620441"
+                  timestampString = "574215009.066362"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "23"

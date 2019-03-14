@@ -108,7 +108,7 @@ class FeatDataViewModel {
     }
     
     func generateViewTypes(feat: FeatDataModel) -> String {
-        var typeText = "\(feat.type)"
+        var typeText = "\(feat.type.capitalizingFirstLetter())"
         if feat.additionalTypes.count != 0 {
             typeText += ", \(feat.additionalTypes)"
         }

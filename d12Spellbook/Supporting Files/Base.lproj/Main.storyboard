@@ -135,7 +135,19 @@
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a3j-CS-ujh">
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <items>
-                                    <navigationItem title="Souce Books" id="VBC-R1-Vio">
+                                    <navigationItem id="VBC-R1-Vio">
+                                        <nil key="title"/>
+                                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="rwc-e2-j32">
+                                            <rect key="frame" x="89" y="7" width="197" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <segments>
+                                                <segment title="Source Books"/>
+                                                <segment title="Feat Types"/>
+                                            </segments>
+                                            <connections>
+                                                <action selector="pickerChanged:" destination="cH2-cw-5KK" eventType="valueChanged" id="qu8-1T-qKh"/>
+                                            </connections>
+                                        </segmentedControl>
                                         <barButtonItem key="rightBarButtonItem" title="Done" id="vcx-9u-oHP">
                                             <connections>
                                                 <action selector="dismissView:" destination="cH2-cw-5KK" id="UZc-wn-b1g"/>
