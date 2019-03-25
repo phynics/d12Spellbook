@@ -13,13 +13,13 @@
         <!--FeatListViewController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" userLabel="FeatListViewController" customClass="FeatListViewController" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Feats" id="BYZ-38-t0r" userLabel="FeatListViewController" customClass="FeatListViewController" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Zgt-Xd-afM">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <searchBar key="tableHeaderView" contentMode="redraw" id="O7e-sU-3eq">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -73,6 +73,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <tabBarItem key="tabBarItem" title="Feats" id="rBu-lb-lET"/>
                     <navigationItem key="navigationItem" title="All Feats" id="SY2-Af-ez1">
                         <barButtonItem key="backBarButtonItem" title="Back" id="kK2-nk-keR"/>
                         <barButtonItem key="rightBarButtonItem" title="Filter" id="xl0-BX-LbN">
@@ -92,7 +93,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1076" y="133.5832083958021"/>
+            <point key="canvasLocation" x="1969" y="170"/>
         </scene>
         <!--FeatFilterView-->
         <scene sceneID="7WW-Jz-EX9">
@@ -138,7 +139,7 @@
                                     <navigationItem id="VBC-R1-Vio">
                                         <nil key="title"/>
                                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="rwc-e2-j32">
-                                            <rect key="frame" x="89" y="7" width="197" height="30"/>
+                                            <rect key="frame" x="89" y="7.5" width="197" height="29"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <segments>
                                                 <segment title="Source Books"/>
@@ -175,7 +176,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2lx-yj-aMq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1989.5999999999999" y="196.55172413793105"/>
+            <point key="canvasLocation" x="2929" y="170"/>
         </scene>
         <!--FeatDetailView-->
         <scene sceneID="OW3-co-TCe">
@@ -275,7 +276,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xmg-kE-DEU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1991" y="-485"/>
+            <point key="canvasLocation" x="2929" y="-482"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="PiP-Gp-gr2">
@@ -288,12 +289,59 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="sZU-It-RNf"/>
+                        <segue destination="CdU-5D-Foe" kind="relationship" relationship="rootViewController" id="sZU-It-RNf"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jAu-pp-g3D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="133.5832083958021"/>
+            <point key="canvasLocation" x="-39" y="513"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="8EN-27-b8Q">
+            <objects>
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="CdU-5D-Foe" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="JWd-eV-H82"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="nAd-EC-kok">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="Rzw-u7-gtA"/>
+                        <segue destination="5Ui-O2-s27" kind="relationship" relationship="viewControllers" id="YXh-lG-KVu"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vz6-kS-GaO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="812" y="512"/>
+        </scene>
+        <!--Spells-->
+        <scene sceneID="fvk-0X-kmw">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xxX-t0-evv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController title="Spells" id="5Ui-O2-s27" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ydo-7C-dIv">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="5zZ-0L-IAj">
+                                <rect key="frame" x="0.0" y="64" width="375" height="554"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="CeL-3g-mRf" firstAttribute="bottom" secondItem="5zZ-0L-IAj" secondAttribute="bottom" id="1T5-HX-bt7"/>
+                            <constraint firstItem="5zZ-0L-IAj" firstAttribute="leading" secondItem="CeL-3g-mRf" secondAttribute="leading" id="56M-Lc-r5q"/>
+                            <constraint firstItem="CeL-3g-mRf" firstAttribute="trailing" secondItem="5zZ-0L-IAj" secondAttribute="trailing" id="QrB-NJ-NNA"/>
+                            <constraint firstItem="5zZ-0L-IAj" firstAttribute="top" secondItem="CeL-3g-mRf" secondAttribute="top" id="cAN-qZ-pkM"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="CeL-3g-mRf"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" tag="1" title="Spells" id="eRh-M2-YqV"/>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="1969" y="914"/>
         </scene>
     </scenes>
 </document>

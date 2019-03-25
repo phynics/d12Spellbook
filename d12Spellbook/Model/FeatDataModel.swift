@@ -35,7 +35,7 @@ extension FeatDataModel {
 }
 
 extension FeatDataModel {
-    func copyDataFrom(jsonMode com: FeatDataModelPfCommunity) {
+    func copyDataFrom(jsonModel com: FeatDataModelPfCommunity) {
         self.id = com.id
         self.name = com.name
         self.shortDesc = com.description

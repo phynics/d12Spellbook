@@ -2,7 +2,7 @@
 //  DataStack+Migration.swift
 //  CoreStore
 //
-//  Copyright © 2015 John Rommel Estropia
+//  Copyright © 2018 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -708,9 +708,9 @@ public extension DataStack {
                 var fakeProgress: Float = 0
                 
                 var recursiveCheck: () -> Void = {}
-                recursiveCheck = {
+                recursiveCheck = { [weak timerQueue] in
                     
-                    guard fakeProgress < 1 else {
+                    guard let timerQueue = timerQueue, fakeProgress < 1 else {
                         
                         return
                     }
@@ -739,13 +739,13 @@ public extension DataStack {
                     
                     fakeProgress = 1
                 }
-                try storage.cs_finalizeStorageAndWait(soureModelHint: destinationModel)
+                _ = try? storage.cs_finalizeStorageAndWait(soureModelHint: destinationModel)
                 progress.completedUnitCount = progress.totalUnitCount
                 return
             }
             catch {
 
-                throw CoreStoreError(error)
+                // Lightweight migration failed somehow. Proceed using InferedMappingModel below
             }
         }
 
@@ -760,6 +760,11 @@ public extension DataStack {
             attributes: nil
         )
         
+        let externalStorageFolderName = ".\(fileURL.deletingPathExtension().lastPathComponent)_SUPPORT"
+        let temporaryExternalStorageURL = temporaryDirectoryURL.appendingPathComponent(
+            externalStorageFolderName,
+            isDirectory: true
+        )
         let temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(
             fileURL.lastPathComponent,
             isDirectory: false
@@ -799,18 +804,32 @@ public extension DataStack {
         do {
             
             try fileManager.replaceItem(
-                at: fileURL as URL,
+                at: fileURL,
                 withItemAt: temporaryFileURL,
                 backupItemName: nil,
                 options: [],
                 resultingItemURL: nil
             )
+            if fileManager.fileExists(atPath: temporaryExternalStorageURL.path) {
+                
+                let externalStorageURL = fileURL
+                    .deletingLastPathComponent()
+                    .appendingPathComponent(externalStorageFolderName, isDirectory: true)
+                try fileManager.replaceItem(
+                    at: externalStorageURL,
+                    withItemAt: temporaryExternalStorageURL,
+                    backupItemName: nil,
+                    options: [],
+                    resultingItemURL: nil
+                )
+            }
             
             progress.completedUnitCount = progress.totalUnitCount
         }
         catch {
             
             _ = try? fileManager.removeItem(at: temporaryFileURL)
+            _ = try? fileManager.removeItem(at: temporaryExternalStorageURL)
             throw CoreStoreError(error)
         }
     }

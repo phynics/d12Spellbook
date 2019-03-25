@@ -2,7 +2,7 @@
 //  DynamicKeyPath.swift
 //  CoreStore
 //
-//  Copyright © 2017 John Rommel Estropia
+//  Copyright © 2018 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,23 @@
 import Foundation
 
 
+// MARK: - AnyDynamicKeyPath
+
+public protocol AnyDynamicKeyPath {
+    
+    /**
+     The keyPath string
+     */
+    var cs_keyPathString: String { get }
+}
+
+
 // MARK: - DynamicKeyPath
 
 /**
  Used only for utility methods.
  */
-public protocol DynamicKeyPath {
+public protocol DynamicKeyPath: AnyDynamicKeyPath {
     
     /**
      The DynamicObject type
@@ -42,11 +53,6 @@ public protocol DynamicKeyPath {
      The Value type
      */
     associatedtype ValueType
-    
-    /**
-     The keyPath string
-     */
-    var cs_keyPathString: String { get }
 }
 
 

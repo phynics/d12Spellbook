@@ -14,9 +14,8 @@ class FeatListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
 
-    var container: NSPersistentContainer!
 
-    var featDataController: FeatDataController?
+    var dataController: DataController?
 
     var featList: [String: [FeatDataViewModel]]?
     var featListInitials: [String]?
@@ -34,11 +33,8 @@ class FeatListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        self.container = appDelegate.persistentContainer
-
-        self.featDataController = try! FeatDataController(withContext: container.viewContext)
-        _setupFeatData()
+        self.dataController = try! DataController()
+        self.dataController?.delegate = self
 
         tableView.delegate = self
         tableView.dataSource = self
@@ -57,9 +53,12 @@ class FeatListViewController: UIViewController {
             do {
                 
                 let data = try Data(contentsOf: path)
-                self.featDataController?.loadFeatDataFrom(json: data)
+                self.dataController?.loadFeatDataFrom(json: data)
 
-                let featSourcesSorted = self.featDataController?.availableFeatSources
+                let featSourcesSorted = self.dataController?
+                    .fetchFeats(fromSources: nil, withTypes: nil)
+                    .map {$0.viewSourceName}
+                    .unique()
                     .sorted(by:) { a, b -> Bool in
                         if a.contains("PFRPG"), !b.contains("PFRPG") {
                             return true
@@ -78,9 +77,28 @@ class FeatListViewController: UIViewController {
                     return (name: featSourceName, picked: true)
                 })
                 
-                self.featTypes = self.featDataController?
-                        .availableFeatTypes
-                        .map({ (featTypeName) -> FeatToggle in
+                self.featTypes = self.dataController?
+                    .fetchFeats(fromSources: nil, withTypes: nil)
+                    .map { feat -> [String] in
+                        let additionalTypes = feat.viewTypes
+                            .split(separator: ",")
+                            .map({ (substr) -> String in
+                                if substr.hasPrefix(" ") {
+                                    return String(substr.dropFirst()).capitalizingFirstLetter()
+                                } else {
+                                    return String(substr).capitalizingFirstLetter()
+                                }
+                            })
+                        return additionalTypes
+                    }
+                    .reduce([String]()
+                        , { (acc, next) -> [String] in
+                            var result = acc
+                            result.append(contentsOf: next)
+                            return result
+                    })
+                    .unique()
+                    .map({ (featTypeName) -> FeatToggle in
                         return (name: featTypeName, picked: true)
                     })
                 reloadFeatData()
@@ -108,7 +126,7 @@ class FeatListViewController: UIViewController {
                 return source.name
                 
             })
-        let feats = self.featDataController?.fetchFeats(fromSources: pickedSources, withTypes: pickedTypes)
+        let feats = self.dataController?.fetchFeats(fromSources: pickedSources, withTypes: pickedTypes)
         self.featList = Dictionary(grouping: feats!, by: { String($0.viewName.first!) })
         self.featListInitials = Array(self.featList!.keys).sorted()
         tableView.reloadData()
@@ -248,4 +266,10 @@ extension FeatListViewController: FeatSourcePickerDelegate {
         return self.featTypes
     }
     
+}
+
+extension FeatListViewController: DataControllerDelegate {
+    func onDataUpdated(_: updateType) {
+        _setupFeatData()
+    }
 }

@@ -2,7 +2,7 @@
 //  AttributeProtocol.swift
 //  CoreStore
 //
-//  Copyright © 2017 John Rommel Estropia
+//  Copyright © 2018 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -35,13 +35,13 @@ internal protocol AttributeProtocol: class {
     
     var keyPath: KeyPathString { get }
     var isOptional: Bool { get }
-    var isIndexed: Bool { get }
     var isTransient: Bool { get }
+    var allowsExternalBinaryDataStorage: Bool { get }
     var versionHashModifier: () -> String? { get }
     var renamingIdentifier: () -> String? { get }
     var defaultValue: () -> Any? { get }
     var affectedByKeyPaths: () -> Set<String> { get }
-    weak var parentObject: CoreStoreObject? { get set }
+    var parentObject: CoreStoreObject? { get set }
     var getter: CoreStoreManagedObject.CustomGetter? { get }
     var setter: CoreStoreManagedObject.CustomSetter? { get }
 }

@@ -2,7 +2,7 @@
 //  NSManagedObjectContext+Querying.swift
 //  CoreStore
 //
-//  Copyright © 2015 John Rommel Estropia
+//  Copyright © 2018 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@ extension NSManagedObjectContext: FetchableSource, QueryableSource {
                 
                 return object
             }
-            return type(of: object).cs_fromRaw(object: existingRawObject)
+            return cs_dynamicType(of: object).cs_fromRaw(object: existingRawObject)
         }
         catch {
             
@@ -91,13 +91,13 @@ extension NSManagedObjectContext: FetchableSource, QueryableSource {
     @nonobjc
     public func fetchExisting<D: DynamicObject, S: Sequence>(_ objects: S) -> [D] where S.Iterator.Element == D {
         
-        return objects.flatMap({ self.fetchExisting($0.cs_id()) })
+        return objects.compactMap({ self.fetchExisting($0.cs_id()) })
     }
     
     @nonobjc
     public func fetchExisting<D: DynamicObject, S: Sequence>(_ objectIDs: S) -> [D] where S.Iterator.Element == NSManagedObjectID {
         
-        return objectIDs.flatMap({ self.fetchExisting($0) })
+        return objectIDs.compactMap({ self.fetchExisting($0) })
     }
     
     @nonobjc

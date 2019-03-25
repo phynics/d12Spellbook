@@ -2,7 +2,7 @@
 //  DynamicSchema+Convenience.swift
 //  CoreStore
 //
-//  Copyright © 2017 John Rommel Estropia
+//  Copyright © 2018 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -181,7 +181,6 @@ public extension DynamicSchema {
                     default:
                         fatalError("Unsupported attribute type: \(attribute.attributeType.rawValue)")
                     }
-                    let indexedString = attribute.isIndexed ? ", isIndexed: true" : ""
                     let transientString = attribute.isTransient ? ", isTransient: true" : ""
                     // TODO: escape strings
                     let versionHashModifierString = attribute.versionHashModifier
@@ -189,7 +188,7 @@ public extension DynamicSchema {
                     // TODO: escape strings
                     let renamingIdentifierString = attribute.renamingIdentifier
                         .flatMap({ ($0 == attributeName ? "" : ", renamingIdentifier: \"\($0)\"") as String }) ?? ""
-                    output.append("    let \(attributeName) = \(containerType)<\(String(describing: valueType))>(\"\(attributeName)\"\(indexedString)\(defaultString)\(transientString)\(versionHashModifierString)\(renamingIdentifierString))\n")
+                    output.append("    let \(attributeName) = \(containerType)<\(String(describing: valueType))>(\"\(attributeName)\"\(defaultString)\(transientString)\(versionHashModifierString)\(renamingIdentifierString))\n")
                 }
             }
             

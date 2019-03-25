@@ -1,0 +1,6 @@
+framework module RxCoreStore {
+  umbrella header "RxCoreStore-umbrella.h"
+
+  export *
+  module * { export * }
+}

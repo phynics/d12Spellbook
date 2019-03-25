@@ -2,7 +2,7 @@
 //  AsynchronousDataTransaction.swift
 //  CoreStore
 //
-//  Copyright © 2015 John Rommel Estropia
+//  Copyright © 2018 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -172,7 +172,7 @@ public final class AsynchronousDataTransaction: BaseDataTransaction {
             "Attempted to delete an entities from an already committed \(cs_typeName(self))."
         )
         
-        super.delete(([object1, object2] + objects).flatMap { $0 })
+        super.delete(([object1, object2] + objects).compactMap { $0 })
     }
     
     /**

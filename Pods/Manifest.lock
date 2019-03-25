@@ -1,14 +1,19 @@
 PODS:
-  - CoreStore (5.0.0)
+  - CoreStore (5.3.0)
   - PureLayout (3.1.2)
   - RxCocoa (4.3.0):
     - RxSwift (~> 4.0)
+  - RxCoreStore (1.1.0):
+    - CoreStore (~> 5.3)
+    - RxCocoa (~> 4.1)
+    - RxSwift (~> 4.1)
   - RxSwift (4.3.0)
 
 DEPENDENCIES:
   - CoreStore
   - PureLayout
   - RxCocoa
+  - RxCoreStore
   - RxSwift
 
 SPEC REPOS:
@@ -16,14 +21,16 @@ SPEC REPOS:
     - CoreStore
     - PureLayout
     - RxCocoa
+    - RxCoreStore
     - RxSwift
 
 SPEC CHECKSUMS:
-  CoreStore: 9e781fffdc8450ed78d78eba2a5be5940e161c49
+  CoreStore: 6d2d5e7841e9b1f5d452b5ab881e478cf37f540e
   PureLayout: 4634d0b61e3b5021166e8ec7c18e9e0ca0720c8b
   RxCocoa: 71b9cce833fbcb89a8eec11816dd225830c2bd3c
+  RxCoreStore: 4deb168c82c5e45a86b252fa4686552c7c888c1a
   RxSwift: a9717a34df3179fe63563f76e046ad345078dd3a
 
-PODFILE CHECKSUM: b1274e93685a399dacc112a398098fe6aa896a46
+PODFILE CHECKSUM: 9c311a317f26fcac408dac571a2d7033c3ec9be0
 
 COCOAPODS: 1.5.0

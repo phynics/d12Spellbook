@@ -34,7 +34,6 @@ class FeatDataController {
                         }
                     })
                 types.append(contentsOf: additionalTypes)
-                print(types)
                 return types
             }
             .reduce([String]()
@@ -119,7 +118,7 @@ class FeatDataController {
 
     private func _addFeatToDataModel(_ feat: FeatDataModelPfCommunity) {
         let featEntity = FeatDataModel(context: self.context)
-        featEntity.copyDataFrom(jsonMode: feat)
+        featEntity.copyDataFrom(jsonModel: feat)
 
         do {
             try context.save()

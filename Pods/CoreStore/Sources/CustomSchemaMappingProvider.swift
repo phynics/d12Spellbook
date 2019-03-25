@@ -2,7 +2,7 @@
 //  CustomSchemaMappingProvider.swift
 //  CoreStore
 //
-//  Copyright © 2017 John Rommel Estropia
+//  Copyright © 2018 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -56,8 +56,8 @@ public class CustomSchemaMappingProvider: Hashable, SchemaMappingProvider {
         CoreStore.assert(
             cs_lazy {
                 
-                let sources = entityMappings.flatMap({ $0.entityMappingSourceEntity })
-                let destinations = entityMappings.flatMap({ $0.entityMappingDestinationEntity })
+                let sources = entityMappings.compactMap({ $0.entityMappingSourceEntity })
+                let destinations = entityMappings.compactMap({ $0.entityMappingDestinationEntity })
                 return sources.count == Set(sources).count
                     && destinations.count == Set(destinations).count
             },

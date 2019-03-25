@@ -10,13 +10,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "d12Spellbook/Controller/FeatDataController.swift"
-            timestampString = "574216784.470343"
+            timestampString = "575239202.818006"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "23"
             endingLineNumber = "23"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "availableFeatTypes"
+            landmarkType = "24">
             <Locations>
                <Location
                   shouldBeEnabled = "No"

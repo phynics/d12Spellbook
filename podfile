@@ -4,6 +4,7 @@ use_frameworks!
 target 'd12Spellbook' do
     pod 'CoreStore'
     pod 'RxSwift'
+    pod 'RxCoreStore'
     pod 'RxCocoa'
     pod 'PureLayout'
 end

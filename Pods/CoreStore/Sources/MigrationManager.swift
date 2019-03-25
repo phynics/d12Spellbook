@@ -2,7 +2,7 @@
 //  MigrationManager.swift
 //  CoreStore
 //
-//  Copyright © 2015 John Rommel Estropia
+//  Copyright © 2018 John Rommel Estropia
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,10 @@ internal final class MigrationManager: NSMigrationManager, ProgressReporting {
             return
         }
         let progress = self.progress
-        progress.completedUnitCount = Int64(Float(progress.totalUnitCount) * self.migrationProgress)
+        progress.completedUnitCount = max(
+            progress.completedUnitCount,
+            Int64(Float(progress.totalUnitCount) * self.migrationProgress)
+        )
     }
     
     
