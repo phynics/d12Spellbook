@@ -132,10 +132,10 @@ public struct OrderBy<D: DynamicObject>: OrderByClause, FetchClause, QueryClause
     
     
     // MARK: Hashable
-    
-    public var hashValue: Int {
-        
-        return (self.sortDescriptors as NSArray).hashValue
+
+    public func hash(into hasher: inout Hasher) {
+
+        hasher.combine(self.sortDescriptors)
     }
     
     
@@ -257,7 +257,10 @@ public struct OrderBy<D: DynamicObject>: OrderByClause, FetchClause, QueryClause
     }
 }
 
-public extension OrderBy.SortKey where D: CoreStoreObject {
+
+// MARK: - OrderBy.SortKey where D: CoreStoreObject
+
+extension OrderBy.SortKey where D: CoreStoreObject {
     
     /**
      Indicates that the `KeyPathString` should be sorted in ascending order
@@ -298,7 +301,7 @@ public protocol OrderByClause {
 
 // MARK: - Sequence where Iterator.Element: OrderByClause
 
-public extension Sequence where Iterator.Element: OrderByClause {
+extension Sequence where Iterator.Element: OrderByClause {
     
     /**
      Combines multiple `OrderBy` predicates together

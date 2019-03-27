@@ -49,7 +49,7 @@ struct SpellDataModelPfCommunity: Codable {
     let antipaladin: SpellLevel
     let magus: SpellLevel
     let adept: SpellLevel
-    let slaLevel: Int
+    let slaLevel: NullOrInt
     let deity: String
     let domain: String
     let shortDescription: String
@@ -80,7 +80,7 @@ struct SpellDataModelPfCommunity: Codable {
     let water: Int
     let linktext: String
     let id: Int
-    let materialCosts: String
+    let materialCosts: NullOrInt
     let bloodline: String
     let patron: String
     let mythicText: String
@@ -139,4 +139,34 @@ enum SpellLevel: Codable {
             try container.encode(x)
         }
     }
+}
+
+enum NullOrInt: Codable {
+    case none
+    case value(Int)
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let x = try? container.decode(Int.self) {
+            self = .value(x)
+            return
+        }
+        if let x = try? container.decode(String.self),
+            x == "NULL" {
+            self = .none
+            return
+        }
+        throw DecodingError.typeMismatch(NullOrInt.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for NullOr"))
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .none:
+            try container.encode(-1)
+        case .value(let x):
+            try container.encode(x)
+        }
+    }
+    
 }

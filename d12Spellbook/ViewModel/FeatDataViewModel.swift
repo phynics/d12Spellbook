@@ -7,14 +7,23 @@
 //
 
 import UIKit
+import CoreStore
+import RxCoreStore
 
-class FeatDataViewModel {
-    private(set) var viewDescription: NSAttributedString = NSAttributedString()
-    private(set) var viewName: String = ""
-    private(set) var viewPrerequisites: NSAttributedString = NSAttributedString()
-    private(set) var viewSourceName: String = ""
-    private(set) var viewShortDescription: String = ""
-    private(set) var viewTypes: String = ""
+class FeatDataViewModel: CoreStoreObject {
+    
+    let featBenefit = Value.Required<String>("benefit", initial: "")
+    let featNormal = Value.Required<String>("normal", initial: "")
+    let featSpecial = Value.Required<String>("special", initial: "")
+    let featGoal = Value.Required<String>("goal", initial: "")
+    let featCompletionBenefit = Value.Required<String>("completionBenefit", initial: "")
+    let featNote = Value.Required<String>("note", initial: "")
+    let featSource = Value.Required<String>("source", initial: "")
+    let featName = Value.Required<String>("name", initial: "")
+    let featPrerequisites = Value.Required<String>("prerequisites", initial: "")
+    let featShortDescription = Value.Required<String>("shortDesc", initial: "")
+    let featType = Value.Required<String>("type", initial: "")
+    let featAdditionalTypes = Value.Required<String>("additionalTypes", initial: "")
     
     var viewNameWithTypes: String {
         var nameText = "\(viewName)"
@@ -26,17 +35,7 @@ class FeatDataViewModel {
         
     }
     
-    init(withModel feat: FeatDataModel) {
-        self.viewDescription = generateViewDescription(feat: feat)
-        self.viewName = generateViewName(feat: feat)
-        self.viewPrerequisites = generateViewPrerequisites(feat: feat)
-        self.viewSourceName = generateViewSourceName(feat: feat)
-        self.viewShortDescription = generateViewShortDescription(feat: feat)
-        self.viewTypes = generateViewTypes(feat: feat)
-    }
-    
-    
-    func generateViewDescription(feat: FeatDataModel) -> NSAttributedString {
+    var viewDescription: NSAttributedString {
         let fontAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
 
         let benefitText = NSMutableAttributedString(string: "Benefit: ", attributes: fontAttributes)
@@ -49,69 +48,84 @@ class FeatDataViewModel {
         let spacing = NSMutableAttributedString(string: "\n\n")
 
         let viewDescription = NSMutableAttributedString(string: "")
-        if(feat.benefit.count > 0) {
+        if(featBenefit.value.count > 0) {
             viewDescription.append(benefitText)
-            viewDescription.append(NSMutableAttributedString(string: feat.benefit))
+            viewDescription.append(NSMutableAttributedString(string: featBenefit.value))
             viewDescription.append(spacing)
         }
-        if(feat.normal.count > 0) {
+        if(featNormal.value.count > 0) {
             viewDescription.append(normalText)
-            viewDescription.append(NSMutableAttributedString(string: feat.normal))
+            viewDescription.append(NSMutableAttributedString(string: featNormal.value))
             viewDescription.append(spacing)
         }
-        if(feat.special.count > 0) {
+        if(featSpecial.value.count > 0) {
             viewDescription.append(specialText)
-            viewDescription.append(NSMutableAttributedString(string: feat.special))
+            viewDescription.append(NSMutableAttributedString(string: featSpecial.value))
             viewDescription.append(spacing)
         }
-        if(feat.goal.count > 0) {
+        if(featGoal.value.count > 0) {
             viewDescription.append(goalText)
-            viewDescription.append(NSMutableAttributedString(string: feat.goal))
+            viewDescription.append(NSMutableAttributedString(string: featGoal.value))
             viewDescription.append(spacing)
         }
-        if(feat.completionBenefit.count > 0) {
+        if(featCompletionBenefit.value.count > 0) {
             viewDescription.append(completionText)
-            viewDescription.append(NSMutableAttributedString(string: feat.completionBenefit))
+            viewDescription.append(NSMutableAttributedString(string: featCompletionBenefit.value))
             viewDescription.append(spacing)
         }
-        if(feat.note.count > 0) {
+        if(featNote.value.count > 0) {
             viewDescription.append(noteText)
-            viewDescription.append(NSMutableAttributedString(string: feat.note))
+            viewDescription.append(NSMutableAttributedString(string: featNote.value))
             viewDescription.append(spacing)
         }
 
         viewDescription.append(sourceText)
-        viewDescription.append(NSMutableAttributedString(string: feat.sourceName))
+        viewDescription.append(NSMutableAttributedString(string: featSource.value))
 
         return viewDescription
     }
     
-    func generateViewName(feat: FeatDataModel) -> String {
-        return feat.name
+    var viewName: String {
+        return self.featName.value
     }
 
-    func generateViewPrerequisites(feat: FeatDataModel) -> NSAttributedString {
+    var viewPrerequisites: NSAttributedString {
         let fontAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
 
         let prerequisitesText = NSMutableAttributedString(string: "Prerequisites: ", attributes: fontAttributes)
-        prerequisitesText.append(NSMutableAttributedString(string: feat.prerequisites))
+        prerequisitesText.append(NSMutableAttributedString(string: featPrerequisites.value))
         
         return prerequisitesText
     }
 
-    func generateViewShortDescription(feat: FeatDataModel) -> String {
-        return feat.shortDesc
+    var viewShortDescription: String {
+        return featShortDescription.value
     }
     
-    func generateViewSourceName(feat: FeatDataModel) -> String {
-        return feat.sourceName
+    var viewSourceName: String {
+        return featSource.value
     }
     
-    func generateViewTypes(feat: FeatDataModel) -> String {
-        var typeText = "\(feat.type.capitalizingFirstLetter())"
-        if feat.additionalTypes.count != 0 {
-            typeText += ", \(feat.additionalTypes)"
+    var viewTypes: String {
+        var typeText = "\(featType.value.capitalizingFirstLetter())"
+        if featAdditionalTypes.value.count != 0 {
+            typeText += ", \(featAdditionalTypes.value)"
         }
         return typeText
+    }
+    
+    func populate(withModel feat: FeatDataModelPfCommunity) {
+        featBenefit.value = feat.benefit
+        featNormal.value = feat.normal
+        featSpecial.value = feat.special
+        featGoal.value = feat.goal
+        featCompletionBenefit.value = feat.completionBenefit
+        featNote.value = feat.note
+        featSource.value = feat.source
+        featName.value = feat.name
+        featPrerequisites.value = feat.prerequisites
+        featShortDescription.value = feat.description
+        featType.value = feat.type
+        featAdditionalTypes = feat.additionalTypes
     }
 }

@@ -29,7 +29,7 @@ import CoreData
 
 // MARK: - DataStack
 
-public extension DataStack {
+extension DataStack {
     
     /**
      Asynchronously adds a `StorageInterface` to the stack. Migrations are also initiated by default.
@@ -748,12 +748,20 @@ public extension DataStack {
                 // Lightweight migration failed somehow. Proceed using InferedMappingModel below
             }
         }
+        let fileManager = FileManager.default
+        let systemTemporaryDirectoryURL: URL
+        if #available(macOS 10.12, *) {
 
-        let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            systemTemporaryDirectoryURL = fileManager.temporaryDirectory
+        }
+        else {
+
+            systemTemporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+        }
+        let temporaryDirectoryURL = systemTemporaryDirectoryURL
             .appendingPathComponent(Bundle.main.bundleIdentifier ?? "com.CoreStore.DataStack")
             .appendingPathComponent(ProcessInfo().globallyUniqueString)
-        
-        let fileManager = FileManager.default
+
         try! fileManager.createDirectory(
             at: temporaryDirectoryURL,
             withIntermediateDirectories: true,
@@ -838,7 +846,7 @@ public extension DataStack {
 
 // MARK: - FilePrivate
 
-fileprivate extension Array where Element == SchemaMappingProvider {
+extension Array where Element == SchemaMappingProvider {
     
     func findMapping(sourceSchema: DynamicSchema, destinationSchema: DynamicSchema, storage: LocalStorage) throws -> (mappingModel: NSMappingModel, migrationType: MigrationType) {
         

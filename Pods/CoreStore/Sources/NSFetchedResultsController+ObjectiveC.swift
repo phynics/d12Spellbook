@@ -30,7 +30,7 @@ import CoreData
 // MARK: - CSDataStack
 
 @available(macOS 10.12, *)
-public extension CSDataStack {
+extension CSDataStack {
     
     @available(*, deprecated, message: "CoreStore will obsolete NSFetchedResultsController support in the future in favor of CSListMonitor")
     @objc
@@ -49,7 +49,7 @@ public extension CSDataStack {
 // MARK: - CSUnsafeDataTransaction
 
 @available(macOS 10.12, *)
-public extension CSUnsafeDataTransaction {
+extension CSUnsafeDataTransaction {
     
     @available(*, deprecated, message: "CoreStore will obsolete NSFetchedResultsController support in the future in favor of CSListMonitor")
     @objc
@@ -72,12 +72,12 @@ fileprivate func createFRC(fromContext context: NSManagedObjectContext, from: CS
     
     let controller = CoreStoreFetchedResultsController(
         context: context,
-        fetchRequest: CoreStoreFetchRequest().dynamicCast(),
+        fetchRequest: CoreStoreFetchRequest(),
         from: from.bridgeToSwift,
         sectionBy: sectionBy?.bridgeToSwift,
         applyFetchClauses: { (fetchRequest) in
             
-            fetchClauses.forEach { $0.applyToFetchRequest(fetchRequest as! NSFetchRequest<NSFetchRequestResult>) }
+            fetchClauses.forEach { $0.applyToFetchRequest(fetchRequest) }
             
             CoreStore.assert(
                 fetchRequest.sortDescriptors?.isEmpty == false,

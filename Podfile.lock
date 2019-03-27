@@ -1,13 +1,15 @@
 PODS:
-  - CoreStore (5.3.0)
-  - PureLayout (3.1.2)
-  - RxCocoa (4.3.0):
-    - RxSwift (~> 4.0)
-  - RxCoreStore (1.1.0):
-    - CoreStore (~> 5.3)
-    - RxCocoa (~> 4.1)
-    - RxSwift (~> 4.1)
-  - RxSwift (4.3.0)
+  - CoreStore (6.2.1)
+  - PureLayout (3.1.4)
+  - RxAtomic (4.4.2)
+  - RxCocoa (4.4.2):
+    - RxSwift (>= 4.4.2, ~> 4.4)
+  - RxCoreStore (1.3.0):
+    - CoreStore (~> 6.0)
+    - RxCocoa (~> 4.4)
+    - RxSwift (~> 4.4)
+  - RxSwift (4.4.2):
+    - RxAtomic (>= 4.4.2, ~> 4.4)
 
 DEPENDENCIES:
   - CoreStore
@@ -20,16 +22,18 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - CoreStore
     - PureLayout
+    - RxAtomic
     - RxCocoa
     - RxCoreStore
     - RxSwift
 
 SPEC CHECKSUMS:
-  CoreStore: 6d2d5e7841e9b1f5d452b5ab881e478cf37f540e
-  PureLayout: 4634d0b61e3b5021166e8ec7c18e9e0ca0720c8b
-  RxCocoa: 71b9cce833fbcb89a8eec11816dd225830c2bd3c
-  RxCoreStore: 4deb168c82c5e45a86b252fa4686552c7c888c1a
-  RxSwift: a9717a34df3179fe63563f76e046ad345078dd3a
+  CoreStore: 62a1eb5c5c33bf33a71acca8716f961d15d3e720
+  PureLayout: f08c01b8dec00bb14a1fefa3de4c7d9c265df85e
+  RxAtomic: d00e97c10db88c6f08540e0bf2752fc5a2404167
+  RxCocoa: 477990dc3b4c3ff55fb0ac77e1cc06244e0aaec8
+  RxCoreStore: 14c0e010f4b328c5c8270ddd6759c59e913da366
+  RxSwift: 74c29b693c8e42b0f64400e8b06564575742d649
 
 PODFILE CHECKSUM: 9c311a317f26fcac408dac571a2d7033c3ec9be0
 

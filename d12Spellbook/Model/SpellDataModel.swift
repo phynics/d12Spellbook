@@ -66,7 +66,7 @@ class SpellDataModel: NSManagedObject {
     @NSManaged var slaLevel: Int
     @NSManaged var deity: String
     @NSManaged var domain: String
-    @NSManaged var shortDescription: String
+    @NSManaged var shortDesc: String
     @NSManaged var bloodline: String
     @NSManaged var patron: String
     @NSManaged var mythicText: String
@@ -109,7 +109,7 @@ extension SpellDataModel {
         self.divineFocus = com.divineFocus.asBool
         self.deity = com.deity
         self.domain = com.domain
-        self.shortDescription = com.shortDescription
+        self.shortDesc = com.shortDescription
         self.bloodline = com.bloodline
         self.patron = com.patron
         self.mythicText = com.mythicText
@@ -140,6 +140,11 @@ extension SpellDataModel {
         self.skald = com.skald.asInt
         self.investigator = com.investigator.asInt
         self.hunter = com.hunter.asInt
-        self.slaLevel = com.slaLevel 
+        switch com.slaLevel {
+        case .none:
+            self.slaLevel = 0
+        case .value(let x):
+            self.slaLevel = x
+        }
     }
 }

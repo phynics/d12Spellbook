@@ -93,18 +93,19 @@ open /*abstract*/ class CoreStoreObject: DynamicObject, Hashable {
         }
         if lhs.isMeta {
             
-            return type(of: lhs) == type(of: rhs)
+            return cs_dynamicType(of: lhs) == cs_dynamicType(of: rhs)
         }
         return lhs.rawObject!.isEqual(rhs.rawObject!)
     }
     
     
     // MARK: Hashable
-    
-    public var hashValue: Int {
-    
-        return ObjectIdentifier(self).hashValue
-            ^ (self.isMeta ? 0 : self.rawObject!.hashValue)
+
+    public func hash(into hasher: inout Hasher) {
+
+        hasher.combine(self.isMeta)
+        hasher.combine(ObjectIdentifier(self))
+        hasher.combine(self.rawObject)
     }
     
     
@@ -124,10 +125,10 @@ open /*abstract*/ class CoreStoreObject: DynamicObject, Hashable {
             switch child.value {
                 
             case let property as AttributeProtocol:
-                property.parentObject = parentObject
+                property.rawObject = parentObject.rawObject
                     
             case let property as RelationshipProtocol:
-                property.parentObject = parentObject
+                property.rawObject = parentObject.rawObject
                 
             default:
                 continue
@@ -139,7 +140,7 @@ open /*abstract*/ class CoreStoreObject: DynamicObject, Hashable {
 
 // MARK: - DynamicObject where Self: CoreStoreObject
 
-public extension DynamicObject where Self: CoreStoreObject {
+extension DynamicObject where Self: CoreStoreObject {
     
     /**
      Returns the `PartialObject` instance for the object, which acts as a fast, type-safe KVC interface for `CoreStoreObject`.

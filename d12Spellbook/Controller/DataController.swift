@@ -7,21 +7,15 @@
 //
 
 import Foundation
-import RxSwift
 import CoreStore
-import RxCoreStore
 
 class DataController {
 
-    var updateOnDelegateConnect = false
-    var delegate: DataControllerDelegate? {
-        didSet {
-            delegate?.onDataUpdated(.all)
-        }
-    }
+    var delegate: DataControllerDelegate?
 
     var defaults = UserDefaults.standard
     let defaultsFeatKey = "LoadedFeatData"
+    let defaultsSpellKey = "LoadedSpellsData"
 
     init() throws {
         try CoreStore.addStorageAndWait()
@@ -41,25 +35,44 @@ class DataController {
             }
         }, success: { _ in
             self.defaults.set(true, forKey: self.defaultsFeatKey)
-            if self.delegate == nil {
-                self.updateOnDelegateConnect = true
-            }
             self.delegate?.onDataUpdated(.feat)
         }, failure: { _ in
             self.defaults.set(false, forKey: self.defaultsFeatKey)
         })
     }
+    
+    func loadSpellDataFrom(json: Data, force: Bool = false) {
+        CoreStore.perform(asynchronous: { (transaction) -> Void in
+            let loadedSpells = try self._decodeSpellsFrom(jsonData: json)
+            if !force {
+                if self.defaults.bool(forKey: self.defaultsSpellKey) {
+                    return
+                }
+            }
+            for spell in loadedSpells {
+                let newSpell = transaction.create(Into<SpellDataModel>())
+                newSpell.copyDataFrom(jsonModel: spell)
+            }
+        }, success: { _ in
+            self.defaults.set(true, forKey: self.defaultsSpellKey)
+            self.delegate?.onDataUpdated(.spell)
+        }, failure: { error in
+            print(error)
+            self.defaults.set(false, forKey: self.defaultsSpellKey)
+        })
+    }
 
     func fetchFeatBy(id: Int) -> FeatDataViewModel? {
-        if let model = CoreStore.fetchOne(From<FeatDataModel>().where(\.id == id)) {
-            return FeatDataViewModel(withModel: model)
+        let model = try? CoreStore.fetchOne(From<FeatDataModel>().where(\.id == id))
+        if let model = model {
+            return FeatDataViewModel(withModel: model!)
         } else {
             return nil
         }
     }
 
     func fetchFeats(fromSources sources: [String]?, withTypes types: [String]?) -> [FeatDataViewModel] {
-        var filteredFeats = CoreStore.fetchAll(From<FeatDataModel>().orderBy(.ascending(\.name)))
+        var filteredFeats = try? CoreStore.fetchAll(From<FeatDataModel>().orderBy(.ascending(\.name)))
         if let sources = sources {
             filteredFeats = filteredFeats?.filter { sources.contains($0.sourceName) }
         }
@@ -76,6 +89,16 @@ class DataController {
         }
         return filteredFeats?.map { FeatDataViewModel(withModel: $0) } ?? []
     }
+    
+    func fetchSpells() -> [SpellDataViewModel] {
+        do {
+            let spells = try CoreStore.fetchAll(From<SpellDataModel>().orderBy(.ascending(\.name)))
+            return spells.map { SpellDataViewModel(withSpell: $0) }
+        } catch {
+            print("Error fetching spells: \(error)")
+            return []
+        }
+    }
 
     private func _decodeFeatsFrom(jsonData data: Data) throws -> [FeatDataModelPfCommunity] {
         let decoder = JSONDecoder()
@@ -85,6 +108,16 @@ class DataController {
             return a.name.lexicographicallyPrecedes(b.name)
         })
         return featList
+    }
+    
+    private func _decodeSpellsFrom(jsonData data: Data) throws -> [SpellDataModelPfCommunity] {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let rawDecode = try decoder.decode([String: SpellDataModelPfCommunity].self, from: data)
+        let spellList = Array(rawDecode.values).sorted(by: { (a, b) -> Bool in
+            return a.name.lexicographicallyPrecedes(b.name)
+        })
+        return spellList
     }
 }
 

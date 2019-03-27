@@ -28,20 +28,22 @@ class FeatListViewController: UIViewController {
     var showFilteredList = false
     var filteredFeatList: [FeatDataViewModel]?
 
-    let jsonDataSourceName = "FeatsPathfinderCommunity221118"
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.dataController = try! DataController()
         self.dataController?.delegate = self
 
         tableView.delegate = self
         tableView.dataSource = self
 
         searchBar.delegate = self
-
+        //_setupFeatData()
         hideKeyboardOnTouch()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        _setupFeatData()
     }
 
     @IBAction func filterButtonPressed(_ sender: Any) {
@@ -49,12 +51,6 @@ class FeatListViewController: UIViewController {
     }
 
     private func _setupFeatData() {
-        if let path = Bundle.main.url(forResource: jsonDataSourceName, withExtension: "json") {
-            do {
-                
-                let data = try Data(contentsOf: path)
-                self.dataController?.loadFeatDataFrom(json: data)
-
                 let featSourcesSorted = self.dataController?
                     .fetchFeats(fromSources: nil, withTypes: nil)
                     .map {$0.viewSourceName}
@@ -94,40 +90,36 @@ class FeatListViewController: UIViewController {
                     .reduce([String]()
                         , { (acc, next) -> [String] in
                             var result = acc
-                            result.append(contentsOf: next)
+                        result.append(contentsOf: next)
                             return result
                     })
                     .unique()
                     .map({ (featTypeName) -> FeatToggle in
                         return (name: featTypeName, picked: true)
                     })
-                reloadFeatData()
-            } catch {
-                print(error)
-            }
-        }
+                reloadFeatTable()
     }
 
-    func reloadFeatData() {
-        let pickedSources = self.featSources!
+    func reloadFeatTable() {
+        let pickedSources = self.featSources?
             .filter({ (source) -> Bool in
                 return source.picked
             })
             .map({ (source) -> String in
                 return source.name
                 
-            })
+            }) ?? []
         
-        let pickedTypes = self.featTypes!
+        let pickedTypes = self.featTypes?
             .filter({ (source) -> Bool in
                 return source.picked
             })
             .map({ (source) -> String in
                 return source.name
                 
-            })
-        let feats = self.dataController?.fetchFeats(fromSources: pickedSources, withTypes: pickedTypes)
-        self.featList = Dictionary(grouping: feats!, by: { String($0.viewName.first!) })
+            }) ?? []
+        let feats = self.dataController?.fetchFeats(fromSources: pickedSources, withTypes: pickedTypes) ?? []
+        self.featList = Dictionary(grouping: feats, by: { String($0.viewName.first!) })
         self.featListInitials = Array(self.featList!.keys).sorted()
         tableView.reloadData()
     }
@@ -255,7 +247,7 @@ extension FeatListViewController: FeatSourcePickerDelegate {
         self.featSources = sources
         self.featTypes = types
         
-        reloadFeatData()
+        reloadFeatTable()
     }
     
     func retrieveSourceState() -> [FeatListViewController.FeatToggle]? {

@@ -72,7 +72,6 @@ class FeatDataController {
 
     func fetchFeatBy(id: Int) -> FeatDataViewModel? {
         return featList.filter { $0.id == id }
-            .map { FeatDataViewModel(withModel: $0) }
             .first
     }
 
@@ -93,10 +92,10 @@ class FeatDataController {
                 }
             }
         }
-        return filteredFeats.map { FeatDataViewModel(withModel: $0) }
+        return filteredFeats
     }
 
-    private func _fetchFeatsFromDataModel(withPredicate predicate: NSPredicate?) -> [FeatDataModel] {
+    private func _fetchFeatsFromDataModel(withPredicate predicate: NSPredicate?) -> [FeatDataViewModel] {
 
         let featFetch = FeatDataModel.featFetchRequest()
         featFetch.predicate = predicate

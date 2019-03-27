@@ -137,6 +137,10 @@ extension CoreStoreError: CustomDebugStringConvertible, CoreStoreDebugStringConv
         case .progressiveMigrationRequired(let localStoreURL):
             firstLine = ".progressiveMigrationRequired"
             info.append(("localStoreURL", localStoreURL))
+
+        case .asynchronousMigrationRequired(let localStoreURL):
+            firstLine = ".asynchronousMigrationRequired"
+            info.append(("localStoreURL", localStoreURL))
             
         case .internalError(let NSError):
             firstLine = ".internalError"
@@ -148,11 +152,39 @@ extension CoreStoreError: CustomDebugStringConvertible, CoreStoreDebugStringConv
             
         case .userCancelled:
             firstLine = ".userCancelled"
+
+        case .persistentStoreNotFound(let entity):
+            firstLine = ".persistentStoreNotFound"
+            info.append(("entity", entity))
         }
         
         return createFormattedString(
             "\(firstLine) (", ")",
             info
+        )
+    }
+}
+
+
+// MARK: - CoreStoreObject
+
+extension CoreStoreObject: CustomDebugStringConvertible, CoreStoreDebugStringConvertible {
+    
+    // MARK: CustomDebugStringConvertible
+    
+    public var debugDescription: String {
+        
+        return formattedDebugDescription(self)
+    }
+    
+    
+    // MARK: CoreStoreDebugStringConvertible
+    
+    public var coreStoreDumpString: String {
+        
+        return createFormattedString(
+            "(", ")",
+            ("rawObject", self.rawObject as Any)
         )
     }
 }
@@ -290,37 +322,6 @@ extension GroupBy: CustomDebugStringConvertible, CoreStoreDebugStringConvertible
         )
     }
 }
-
-
-#if os(iOS) || os(macOS)
-
-// MARK: - ICloudStore
-
-extension ICloudStore: CustomDebugStringConvertible, CoreStoreDebugStringConvertible {
-    
-    // MARK: CustomDebugStringConvertible
-    
-    public var debugDescription: String {
-        
-        return formattedDebugDescription(self)
-    }
-    
-    
-    // MARK: CoreStoreDebugStringConvertible
-    
-    public var coreStoreDumpString: String {
-        
-        return createFormattedString(
-            "(", ")",
-            ("configuration", self.configuration as Any),
-            ("storeOptions", self.storeOptions as Any),
-            ("cacheFileURL", self.cacheFileURL),
-            ("cloudStorageOptions", self.cloudStorageOptions)
-        )
-    }
-}
-    
-#endif
 
 
 // MARK: - InMemoryStore
@@ -653,6 +654,30 @@ extension OrderBy: CustomDebugStringConvertible, CoreStoreDebugStringConvertible
         return createFormattedString(
             "(", ")",
             ("sortDescriptors", self.sortDescriptors)
+        )
+    }
+}
+
+
+// MARK: - PartialObject
+
+extension PartialObject: CustomDebugStringConvertible, CoreStoreDebugStringConvertible {
+    
+    // MARK: CustomDebugStringConvertible
+    
+    public var debugDescription: String {
+        
+        return formattedDebugDescription(self)
+    }
+    
+    
+    // MARK: CoreStoreDebugStringConvertible
+    
+    public var coreStoreDumpString: String {
+        
+        return createFormattedString(
+            "(", ")",
+            ("rawObject", self.rawObject as Any)
         )
     }
 }
@@ -1086,7 +1111,7 @@ private func createFormattedString(_ firstLine: String, _ lastLine: String, _ in
     return string
 }
 
-fileprivate extension String {
+extension String {
     
     fileprivate static func indention(_ level: Int = 1) -> String {
         
@@ -1207,6 +1232,8 @@ extension NSAttributeType: CoreStoreDebugStringConvertible {
         case .objectIDAttributeType:        return ".objectIDAttributeType"
         case .UUIDAttributeType:            return ".UUIDAttributeType"
         case .URIAttributeType:             return ".URIAttributeType"
+        @unknown default:
+            fatalError()
         }
     }
 }
@@ -1229,6 +1256,8 @@ extension NSDeleteRule: CoreStoreDebugStringConvertible {
         case .nullifyDeleteRule:    return ".nullifyDeleteRule"
         case .cascadeDeleteRule:    return ".cascadeDeleteRule"
         case .denyDeleteRule:       return ".denyDeleteRule"
+        @unknown default:
+            fatalError()
         }
     }
 }
@@ -1257,7 +1286,10 @@ extension NSEntityDescription: CoreStoreDebugStringConvertible {
             
             info.append(("compoundIndexes", self.compoundIndexes))
         }
-        info.append(("uniquenessConstraints", self.uniquenessConstraints))
+        if #available(macOS 10.11, *) {
+            
+            info.append(("uniquenessConstraints", self.uniquenessConstraints))
+        }
         return createFormattedString(
             "(", ")",
             info
