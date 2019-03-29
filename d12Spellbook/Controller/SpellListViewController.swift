@@ -8,45 +8,27 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 class SpellListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     var dataController: DataController?
-    var spells: [SpellDataViewModel]?
-    
+    var spells = BehaviorSubject<[SpellDataViewModel]>(value: [])
+    var disposeBag = DisposeBag()
+
     override func viewDidLoad() {
-        dataController?.delegate = self
-        tableView.dataSource = self
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        loadData()
-    }
-    
-    func loadData() {
-        spells = dataController?.fetchSpells()
-        tableView.reloadData()
-    }
-}
+        spells.observeOn(MainScheduler.instance)
+            .bind(to: tableView.rx.items(cellIdentifier: "spellCell")) { index, model, cell in
+                if let spellCell = cell as? SpellListTableViewCell {
+                    spellCell.spell = model
+                }
+            }
+            .disposed(by: disposeBag)
 
-extension SpellListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return spells?.count ?? 0
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "spellCell") as! SpellListTableViewCell
-        if let spells = self.spells {
-            cell.spell = spells[indexPath.row]
+        if let dataController = self.dataController {
+            dataController.fetchSpellsUpdating()
+                .subscribe(self.spells.asObserver())
+                .disposed(by: disposeBag)
         }
-        return cell
-    }
-    
-    
-}
-
-extension SpellListViewController: DataControllerDelegate {
-    func onDataUpdated(_: updateType) {
-        loadData()
     }
 }

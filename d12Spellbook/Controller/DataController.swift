@@ -8,6 +8,8 @@
 
 import Foundation
 import CoreStore
+import RxCoreStore
+import RxSwift
 
 class DataController {
 
@@ -18,7 +20,22 @@ class DataController {
     let defaultsSpellKey = "LoadedSpellsData"
 
     init() throws {
-        try CoreStore.addStorageAndWait()
+        CoreStore.defaultStack = DataStack(
+            CoreStoreSchema(
+                modelVersion: "V1",
+                entities: [
+                    Entity<FeatDataViewModel>("FeatDataViewModel"),
+                    Entity<SpellDataViewModel>("SpellDataViewModel")
+                ]
+            )
+        )
+
+        try! CoreStore.addStorageAndWait(
+            SQLiteStore(
+                fileName: "d12Spellbook.sqlit",
+                localStorageOptions: .recreateStoreOnModelMismatch
+            )
+        )
     }
 
     func loadFeatDataFrom(json: Data, force: Bool = false) {
@@ -30,8 +47,8 @@ class DataController {
                 }
             }
             for feat in loadedFeats {
-                let newFeatObject = transaction.create(Into<FeatDataModel>())
-                newFeatObject.copyDataFrom(jsonModel: feat)
+                let newFeatObject = transaction.create(Into<FeatDataViewModel>())
+                newFeatObject.populate(withModel: feat)
             }
         }, success: { _ in
             self.defaults.set(true, forKey: self.defaultsFeatKey)
@@ -40,7 +57,7 @@ class DataController {
             self.defaults.set(false, forKey: self.defaultsFeatKey)
         })
     }
-    
+
     func loadSpellDataFrom(json: Data, force: Bool = false) {
         CoreStore.perform(asynchronous: { (transaction) -> Void in
             let loadedSpells = try self._decodeSpellsFrom(jsonData: json)
@@ -50,8 +67,8 @@ class DataController {
                 }
             }
             for spell in loadedSpells {
-                let newSpell = transaction.create(Into<SpellDataModel>())
-                newSpell.copyDataFrom(jsonModel: spell)
+                let newSpell = transaction.create(Into<SpellDataViewModel>())
+                newSpell.populate(withModel: spell)
             }
         }, success: { _ in
             self.defaults.set(true, forKey: self.defaultsSpellKey)
@@ -63,60 +80,74 @@ class DataController {
     }
 
     func fetchFeatBy(id: Int) -> FeatDataViewModel? {
-        let model = try? CoreStore.fetchOne(From<FeatDataModel>().where(\.id == id))
-        if let model = model {
-            return FeatDataViewModel(withModel: model!)
-        } else {
-            return nil
-        }
+        return try! CoreStore.fetchOne(
+            From<FeatDataViewModel>(),
+            Where<FeatDataViewModel>("id == %d", id)
+        )
     }
 
     func fetchFeats(fromSources sources: [String]?, withTypes types: [String]?) -> [FeatDataViewModel] {
-        var filteredFeats = try? CoreStore.fetchAll(From<FeatDataModel>().orderBy(.ascending(\.name)))
+        var filteredFeats = try? CoreStore.fetchAll(
+            From<FeatDataViewModel>(),
+            OrderBy<FeatDataViewModel>(.ascending("name"))
+        )
         if let sources = sources {
-            filteredFeats = filteredFeats?.filter { sources.contains($0.sourceName) }
+            filteredFeats = filteredFeats?.filter { sources.contains($0.viewSourceName) }
         }
         if let types = types {
             filteredFeats = filteredFeats?.filter { feat in
-                if types.contains(feat.type) {
+                if types.contains(feat.featType.value) {
                     return true
                 } else {
-                    return types.contains(where: { (type) -> Bool in
-                        feat.additionalTypes.contains(type)
-                    })
+                    return types.contains { (type) -> Bool in
+                        return feat.featAdditionalTypes.value.contains(type)
+                    }
                 }
             }
         }
-        return filteredFeats?.map { FeatDataViewModel(withModel: $0) } ?? []
+        return filteredFeats ?? []
     }
-    
+
     func fetchSpells() -> [SpellDataViewModel] {
         do {
-            let spells = try CoreStore.fetchAll(From<SpellDataModel>().orderBy(.ascending(\.name)))
-            return spells.map { SpellDataViewModel(withSpell: $0) }
+            let spells = try CoreStore.fetchAll(
+                From<SpellDataViewModel>(),
+                OrderBy<SpellDataViewModel>(.ascending("name"))
+            )
+            return spells
         } catch {
             print("Error fetching spells: \(error)")
             return []
         }
     }
 
+    func fetchSpellsUpdating() -> Observable<[SpellDataViewModel]> {
+        return CoreStore.rx.monitorList(
+            From<SpellDataViewModel>(),
+            OrderBy<SpellDataViewModel>(.ascending("name"))
+        )
+            .filterListDidChange()
+            .map { _ in self.fetchSpells() }
+            .startWith(fetchSpells())
+    }
+
     private func _decodeFeatsFrom(jsonData data: Data) throws -> [FeatDataModelPfCommunity] {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let rawDecode = try decoder.decode([String: FeatDataModelPfCommunity].self, from: data)
-        let featList = Array(rawDecode.values).sorted(by: { (a, b) -> Bool in
+        let featList = Array(rawDecode.values).sorted { (a, b) -> Bool in
             return a.name.lexicographicallyPrecedes(b.name)
-        })
+        }
         return featList
     }
-    
+
     private func _decodeSpellsFrom(jsonData data: Data) throws -> [SpellDataModelPfCommunity] {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let rawDecode = try decoder.decode([String: SpellDataModelPfCommunity].self, from: data)
-        let spellList = Array(rawDecode.values).sorted(by: { (a, b) -> Bool in
+        let spellList = Array(rawDecode.values).sorted { (a, b) -> Bool in
             return a.name.lexicographicallyPrecedes(b.name)
-        })
+        }
         return spellList
     }
 }

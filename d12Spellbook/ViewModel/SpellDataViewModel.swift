@@ -6,7 +6,6 @@
 //  Copyright © 2019 atakan. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import CoreStore
 
@@ -30,7 +29,7 @@ class SpellDataViewModel: CoreStoreObject {
     let mythicDescription = Value.Required<String>("mythicDescription", initial: "")
     let shapeable = Value.Required<Bool>("shapeable", initial: false)
     let dismissable = Value.Required<Bool>("dismissable", initial: false)
-    let description = Value.Required<String>("description", initial: "")
+    let shortDescription = Value.Required<String>("shortDescription", initial: "")
 
     var schoolsWithDescriptors: String {
         if subschool.value.count > 0
@@ -122,7 +121,7 @@ class SpellDataViewModel: CoreStoreObject {
         }
         
         viewDescription.append(spacing)
-        viewDescription.append(NSMutableAttributedString(string: description.value))
+        viewDescription.append(NSMutableAttributedString(string: shortDescription.value))
         
         if mythic.value {
             viewDescription.append(spacing)
@@ -139,7 +138,7 @@ class SpellDataViewModel: CoreStoreObject {
         school.value = spell.school
         subschool.value = spell.subschool
         descriptor.value = spell.descriptor
-        description.value = spell.description
+        shortDescription.value = spell.description
         castingClasses.value = spell.spellLevel
         components.value = spell.components
         costlyComponent.value = spell.costlyComponents.asBool

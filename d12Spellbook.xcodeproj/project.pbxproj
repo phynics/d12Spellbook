@@ -20,7 +20,6 @@
 		7D77A318223F137B00F8FAFD /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77A317223F137B00F8FAFD /* DataController.swift */; };
 		7DA3CB4B2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3CB4A2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift */; };
 		7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */; };
-		7DC54B092233E7D900E2610A /* FeatDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC54B082233E7D900E2610A /* FeatDataController.swift */; };
 		7DCCABDF22385F20007C7E1F /* Sequence+Unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCABDE22385F20007C7E1F /* Sequence+Unique.swift */; };
 		7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AB22249A1400722982 /* AppDelegate.swift */; };
 		7DCCD4AE22249A1400722982 /* FeatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DCCD4AD22249A1400722982 /* FeatListViewController.swift */; };
@@ -48,7 +47,6 @@
 		7D77A317223F137B00F8FAFD /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		7DA3CB4A2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+hideKeyboardOnTouch.swift"; sourceTree = "<group>"; };
 		7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatCardDetailViewController.swift; sourceTree = "<group>"; };
-		7DC54B082233E7D900E2610A /* FeatDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataController.swift; sourceTree = "<group>"; };
 		7DCCABDE22385F20007C7E1F /* Sequence+Unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sequence+Unique.swift"; sourceTree = "<group>"; };
 		7DCCD4A822249A1400722982 /* d12Spellbook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = d12Spellbook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DCCD4AB22249A1400722982 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -121,7 +119,6 @@
 			children = (
 				7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */,
 				7D5E31442236FBFE00EDB101 /* FeatSourceListTableViewCell.swift */,
-				7DC54B082233E7D900E2610A /* FeatDataController.swift */,
 				7DE7900222499AC2003BC44A /* SpellListViewController.swift */,
 				7D5E31482236FCA300EDB101 /* FeatSourcePickerViewController.swift */,
 				7DE790042249A3EA003BC44A /* SpellListTableViewCell.swift */,
@@ -329,7 +326,6 @@
 				7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */,
 				7D1813F42239D9A100D70356 /* String+CapitilizingFirstLetter.swift in Sources */,
 				7DA3CB4B2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift in Sources */,
-				7DC54B092233E7D900E2610A /* FeatDataController.swift in Sources */,
 				7DCCABDF22385F20007C7E1F /* Sequence+Unique.swift in Sources */,
 				7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */,
 				7D77A318223F137B00F8FAFD /* DataController.swift in Sources */,

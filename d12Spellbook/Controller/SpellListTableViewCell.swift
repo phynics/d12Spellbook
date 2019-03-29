@@ -15,8 +15,8 @@ class SpellListTableViewCell: UITableViewCell {
     
     var spell: SpellDataViewModel? {
         didSet {
-            nameLabel.text = spell?.viewName
-            levelLabel.text = spell?.viewCastingClasses
+            nameLabel.text = spell?.name.value
+            levelLabel.text = spell?.castingClasses.value
         }
     }
 }

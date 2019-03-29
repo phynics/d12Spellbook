@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreStore
-import RxCoreStore
 
 class FeatDataViewModel: CoreStoreObject {
     
@@ -24,6 +23,7 @@ class FeatDataViewModel: CoreStoreObject {
     let featShortDescription = Value.Required<String>("shortDesc", initial: "")
     let featType = Value.Required<String>("type", initial: "")
     let featAdditionalTypes = Value.Required<String>("additionalTypes", initial: "")
+    let featId = Value.Required<Int>("id", initial: -1)
     
     var viewNameWithTypes: String {
         var nameText = "\(viewName)"
@@ -126,6 +126,7 @@ class FeatDataViewModel: CoreStoreObject {
         featPrerequisites.value = feat.prerequisites
         featShortDescription.value = feat.description
         featType.value = feat.type
-        featAdditionalTypes = feat.additionalTypes
+        featAdditionalTypes.value = feat.additionalTypes
+        featId.value = feat.id
     }
 }
