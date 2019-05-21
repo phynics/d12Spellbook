@@ -7,4 +7,9 @@ target 'd12Spellbook' do
     pod 'RxCoreStore'
     pod 'RxCocoa'
     pod 'PureLayout'
+    pod 'Eureka'
+    pod 'RxEureka'
+    pod 'XLPagerTabStrip'
+    pod 'RxDataSources'
+    pod 'RxOptional'
 end

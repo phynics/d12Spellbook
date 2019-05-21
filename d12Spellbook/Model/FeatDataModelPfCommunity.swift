@@ -122,3 +122,15 @@ struct FeatDataModelPfCommunity: Codable {
         }
     }
 }
+
+extension FeatDataModelPfCommunity {
+    static func createFrom(JsonData data: Data) throws -> [FeatDataModelPfCommunity] {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let rawDecode = try decoder.decode([String: FeatDataModelPfCommunity].self, from: data)
+        let featList = Array(rawDecode.values).sorted { (a, b) -> Bool in
+            return a.name.lexicographicallyPrecedes(b.name)
+        }
+        return featList
+    }
+}

@@ -8,10 +8,13 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 class EntryViewController: UITabBarController {
 
     var dataController: DataController?
+    
+    let disposeBag = DisposeBag()
     
     let jsonDataSourceName = "FeatsPathfinderCommunity221118"
     let spellDataSourceName = "SpellsData22Nov2018"
@@ -23,6 +26,8 @@ class EntryViewController: UITabBarController {
             do {
                 let data = try Data(contentsOf: path)
                 self.dataController?.loadFeatDataFrom(json: data)
+                    .subscribe()
+                    .disposed(by: disposeBag)
             } catch {
                 print("Error loading feats: \(error)")
             }
@@ -32,6 +37,8 @@ class EntryViewController: UITabBarController {
             do {
                 let data = try Data(contentsOf: path)
                 self.dataController?.loadSpellDataFrom(json: data)
+                    .subscribe()
+                    .disposed(by: disposeBag)
             } catch {
                 print("Error loading spells: \(error)")
             }

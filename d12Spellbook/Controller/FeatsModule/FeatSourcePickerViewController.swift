@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 class FeatSourcePickerViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
@@ -174,8 +175,8 @@ extension FeatSourcePickerViewController: UITableViewDelegate {
 
 
 protocol FeatSourcePickerDelegate {
-    func retrieveSourceState() -> [FeatListViewController.FeatToggle]?
-    func retrieveTypeState() -> [FeatListViewController.FeatToggle]?
+    func retrieveSourceState() -> [FeatListViewController.FeatToggle]
+    func retrieveTypeState() -> [FeatListViewController.FeatToggle]
     func lastState(types: [FeatListViewController.FeatToggle], sources: [FeatListViewController.FeatToggle])
 }
 

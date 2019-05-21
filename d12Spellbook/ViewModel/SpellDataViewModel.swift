@@ -31,6 +31,28 @@ class SpellDataViewModel: CoreStoreObject {
     let dismissable = Value.Required<Bool>("dismissable", initial: false)
     let shortDescription = Value.Required<String>("shortDescription", initial: "")
 
+    
+    var viewName: String {
+        return name.value
+    }
+    
+    var viewSchool: String {
+        return school.value
+    }
+    
+    var viewSubschools: String {
+        return subschool.value
+    }
+    
+    var viewDescriptors: String {
+        return descriptor.value
+    }
+    
+    var viewCastingClasses: [String] {
+        return castingClasses.value.split(separator: Character(","))
+            .map { String($0) }
+    }
+    
     var schoolsWithDescriptors: String {
         if subschool.value.count > 0
             || descriptor.value.count > 0 {
@@ -47,6 +69,7 @@ class SpellDataViewModel: CoreStoreObject {
         }
         return ""
     }
+    
     var viewDescription: NSAttributedString {
         let fontAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
         

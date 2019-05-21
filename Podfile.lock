@@ -1,5 +1,7 @@
 PODS:
   - CoreStore (6.2.1)
+  - Differentiator (3.1.0)
+  - Eureka (4.3.1)
   - PureLayout (3.1.4)
   - RxAtomic (4.4.2)
   - RxCocoa (4.4.2):
@@ -8,33 +10,61 @@ PODS:
     - CoreStore (~> 6.0)
     - RxCocoa (~> 4.4)
     - RxSwift (~> 4.4)
+  - RxDataSources (3.1.0):
+    - Differentiator (~> 3.0)
+    - RxCocoa (~> 4.0)
+    - RxSwift (~> 4.0)
+  - RxEureka (0.2.2):
+    - Eureka (~> 4.0)
+    - RxCocoa (~> 4.0)
+  - RxOptional (3.6.2):
+    - RxCocoa (~> 4.0)
+    - RxSwift (~> 4.0)
   - RxSwift (4.4.2):
     - RxAtomic (>= 4.4.2, ~> 4.4)
+  - XLPagerTabStrip (8.1.1)
 
 DEPENDENCIES:
   - CoreStore
+  - Eureka
   - PureLayout
   - RxCocoa
   - RxCoreStore
+  - RxDataSources
+  - RxEureka
+  - RxOptional
   - RxSwift
+  - XLPagerTabStrip
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - CoreStore
+    - Differentiator
+    - Eureka
     - PureLayout
     - RxAtomic
     - RxCocoa
     - RxCoreStore
+    - RxDataSources
+    - RxEureka
+    - RxOptional
     - RxSwift
+    - XLPagerTabStrip
 
 SPEC CHECKSUMS:
   CoreStore: 62a1eb5c5c33bf33a71acca8716f961d15d3e720
+  Differentiator: be49ca3408f0ecfc761e4c7763d20c62be01b9ad
+  Eureka: 28ea296f06710f6745266b71f17862048941a32d
   PureLayout: f08c01b8dec00bb14a1fefa3de4c7d9c265df85e
   RxAtomic: d00e97c10db88c6f08540e0bf2752fc5a2404167
   RxCocoa: 477990dc3b4c3ff55fb0ac77e1cc06244e0aaec8
   RxCoreStore: 14c0e010f4b328c5c8270ddd6759c59e913da366
+  RxDataSources: a843bad90c29817f5923ec8163f4af2de084ceb3
+  RxEureka: b8ff9c181316c9cee3c546418c626330f793683f
+  RxOptional: 80426a0ddbd092573e4c482d8cc13302078c4d5e
   RxSwift: 74c29b693c8e42b0f64400e8b06564575742d649
+  XLPagerTabStrip: 63166e21c9844fa30f2d95d30f335e73be5caf22
 
-PODFILE CHECKSUM: 9c311a317f26fcac408dac571a2d7033c3ec9be0
+PODFILE CHECKSUM: 0cd136670f8e6f742061c58752a404a776774e4c
 
 COCOAPODS: 1.5.0

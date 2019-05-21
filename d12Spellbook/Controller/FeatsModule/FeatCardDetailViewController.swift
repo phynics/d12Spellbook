@@ -9,6 +9,7 @@
 import UIKit
 
 class FeatCardDetailViewController: UIViewController {
+    @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var prereqLabel: UILabel!
     @IBOutlet weak var shortDescLabel: UILabel!
     @IBOutlet weak var descLabel: UILabel!
@@ -24,7 +25,8 @@ class FeatCardDetailViewController: UIViewController {
             self.prereqLabel.attributedText = feat.viewPrerequisites
             self.shortDescLabel.text = feat.viewShortDescription
             self.descLabel.attributedText = feat.viewDescription
-            self.navTitle.title = feat.viewName
+            self.titleLabel.text = feat.viewNameWithTypes
+            self.navTitle.title = "Feat Details"
         }
     }
 }

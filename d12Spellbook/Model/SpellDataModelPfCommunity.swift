@@ -170,3 +170,15 @@ enum NullOrInt: Codable {
     }
     
 }
+
+extension SpellDataModelPfCommunity {
+    static func createFrom(JsonData data: Data) throws -> [SpellDataModelPfCommunity] {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let rawDecode = try decoder.decode([String: SpellDataModelPfCommunity].self, from: data)
+        let spellList = Array(rawDecode.values).sorted { (a, b) -> Bool in
+            return a.name.lexicographicallyPrecedes(b.name)
+        }
+        return spellList
+    }
+}
