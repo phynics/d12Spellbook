@@ -20,11 +20,11 @@ class SpellListViewController: UIViewController {
     var spellClassesFilter = BehaviorSubject<[String]>(value: [])
     var disposeBag = DisposeBag()
 
-    
+
     @IBAction func onFilterButtonSelected(_ sender: Any) {
         performSegue(withIdentifier: "spellFilter", sender: nil)
     }
-    
+
     override func viewDidLoad() {
         if let dataController = self.dataController { // set up behaviorsubjects
             dataController.spells
@@ -34,19 +34,21 @@ class SpellListViewController: UIViewController {
                 .subscribe(self.spellClasses.asObserver())
                 .disposed(by: disposeBag)
         }
-        
+
         let searchResult = self.searchBar.rx.text // retrieve searchbar results
-            .orEmpty
+        .orEmpty
             .distinctUntilChanged()
             .debounce(0.5, scheduler: MainScheduler.instance)
-        
+
         Observable.combineLatest(searchResult, spells, spellClassesFilter) { (searchText, spellsList, filter) -> [SpellDataViewModel] in // combine and filter from data sources
             var spells = spellsList
             if filter.count > 0 {
                 spells = spells.filter { (model) -> Bool in
-                    model.viewCastingClasses.contains(where: { (ccsl) -> Bool in
-                        filter.contains(ccsl.castingClass.rawValue)
-                    })
+                    model.viewCastingClasses
+                        .filter { $0.spellLevel > 0 }
+                        .contains(where: { (ccsl) -> Bool in
+                            return filter.contains(ccsl.castingClass.rawValue)
+                        })
                 }
             }
             if searchText.count > 0 {
@@ -60,9 +62,9 @@ class SpellListViewController: UIViewController {
             .bind(to: tableView.rx.items(cellIdentifier: "spellCell")) { (index, item, cell) in
                 let spellCell = cell as? SpellListTableViewCell
                 spellCell?.spell = item
-        }
+            }
             .disposed(by: disposeBag)
-        
+
         tableView.rx.modelSelected(SpellDataViewModel.self)
             .observeOn(MainScheduler.instance)
             .subscribe { [weak self] model in
@@ -78,7 +80,7 @@ class SpellListViewController: UIViewController {
             }
             .disposed(by: disposeBag)
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? SpellListFilterView {
             destination.dataSource = self
@@ -88,17 +90,17 @@ class SpellListViewController: UIViewController {
 
 extension SpellListViewController: SpellListFilterViewDataSource {
     func availableClassses() -> [String] {
-       return try! spellClasses.value()
+        return try! spellClasses.value()
     }
-    
+
     func pickedClasses() -> [String] {
         return try! spellClassesFilter.value()
     }
-    
+
     func onClassesPicked(_ list: [String]) {
         spellClassesFilter.onNext(list)
     }
-    
+
 }
 
 struct LevelSectionOfSpellData {
@@ -107,8 +109,8 @@ struct LevelSectionOfSpellData {
 }
 
 extension LevelSectionOfSpellData: SectionModelType {
-    typealias  Item = SpellDataViewModel
-    
+    typealias Item = SpellDataViewModel
+
     init(original: LevelSectionOfSpellData, items: [Item]) {
         self = original
         self.items = items
