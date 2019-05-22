@@ -61,28 +61,8 @@ class DataController {
     }
 
     var spellClasses: Observable<[String]> {
-        return spells.map { spellList in
-            let listOfClasses = spellList
-                .map { spell -> [String] in
-                    spell.viewCastingClasses
-                        .map {
-                            if $0.hasPrefix(" ") {
-                                return String($0.dropFirst())
-                            } else {
-                                return $0
-                            }
-                        }
-                        .map { (str: String) -> String in
-                            return String(str.prefix(1).uppercased())
-                                + String(str.dropFirst().dropLast())
-                        }
-                }
-                .reduce(into: [String](), { (result, next) in
-                    result.append(contentsOf: next)
-                })
-                .sorted()
-            return listOfClasses.unique()
-        }
+        let classNames = CastingClass.allCases .map { (option: CastingClass) in option.rawValue }
+        return Observable.just(classNames)
     }
 
     init() throws {

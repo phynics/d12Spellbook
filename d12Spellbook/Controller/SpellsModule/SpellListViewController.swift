@@ -43,20 +43,16 @@ class SpellListViewController: UIViewController {
         Observable.combineLatest(searchResult, spells, spellClassesFilter) { (searchText, spellsList, filter) -> [SpellDataViewModel] in // combine and filter from data sources
             var spells = spellsList
             if filter.count > 0 {
-                spells = spells.filter({ (model) -> Bool in
-                    print("1\(model.viewCastingClasses)")
-                    print("2\(filter)")
-                    let result = model.viewCastingClasses.contains { (cls) -> Bool in
-                        return filter.contains(cls)
-                    }
-                    print(result)
-                    return result
-                })
-                print(spells)
+                spells = spells.filter { (model) -> Bool in
+                    model.viewCastingClasses.contains(where: { (ccsl) -> Bool in
+                        filter.contains(ccsl.castingClass.rawValue)
+                    })
+                }
             }
-            
-            spells = spells.filter {
-                $0.viewName.lowercased().contains(searchText.lowercased())
+            if searchText.count > 0 {
+                spells = spells.filter {
+                    $0.viewName.lowercased().contains(searchText.lowercased())
+                }
             }
             return spells
         }
