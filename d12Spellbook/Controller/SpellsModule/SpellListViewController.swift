@@ -14,10 +14,14 @@ import RxDataSources
 class SpellListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
+
+    let backgroundScheduler = ConcurrentDispatchQueueScheduler(qos: .background)
+
     var dataController: DataController?
     var spells = BehaviorSubject<[SpellDataViewModel]>(value: [])
-    var spellClasses = BehaviorSubject<[String]>(value: [])
     var spellClassesFilter = BehaviorSubject<[String]>(value: [])
+    var spellSchoolsFilter = BehaviorSubject<[String]>(value: [])
+    var spellComponentsFilter = BehaviorSubject<[String]>(value: [])
     var disposeBag = DisposeBag()
 
 
@@ -30,27 +34,33 @@ class SpellListViewController: UIViewController {
             dataController.spells
                 .subscribe(self.spells.asObserver())
                 .disposed(by: disposeBag)
-            dataController.spellClasses
-                .subscribe(self.spellClasses.asObserver())
-                .disposed(by: disposeBag)
         }
 
         let searchResult = self.searchBar.rx.text // retrieve searchbar results
         .orEmpty
             .distinctUntilChanged()
-            .debounce(0.5, scheduler: MainScheduler.instance)
+            .debounce(0.5, scheduler: backgroundScheduler)
 
-        Observable.combineLatest(searchResult, spells, spellClassesFilter) { (searchText, spellsList, filter) -> [SpellDataViewModel] in // combine and filter from data sources
+        Observable.combineLatest(searchResult, spells, spellClassesFilter, spellComponentsFilter, spellSchoolsFilter)
+        { (searchText, spellsList, classFilter, componentFilter, schoolFilter) -> [SpellDataViewModel] in // combine and filter from data sources
             var spells = spellsList
-            if filter.count > 0 {
+
+            if classFilter.count > 0 {
                 spells = spells.filter { (model) -> Bool in
                     model.viewCastingClasses
                         .filter { $0.spellLevel > 0 }
                         .contains(where: { (ccsl) -> Bool in
-                            return filter.contains(ccsl.castingClass.rawValue)
+                            return classFilter.contains(ccsl.castingClass.rawValue)
                         })
                 }
             }
+            
+            if schoolFilter.count > 0 {
+                spells = spells.filter { (model) -> Bool in
+                    return schoolFilter.contains(model.viewSchool.rawValue)
+                }
+            }
+
             if searchText.count > 0 {
                 spells = spells.filter {
                     $0.viewName.lowercased().contains(searchText.lowercased())
@@ -89,8 +99,24 @@ class SpellListViewController: UIViewController {
 }
 
 extension SpellListViewController: SpellListFilterViewDataSource {
+    func availableComponents() -> [String] {
+        return CastingComponent.allCases.map { $0.rawValue }
+    }
+
+    func pickedComponents() -> [String] {
+        return try! spellSchoolsFilter.value()
+    }
+
+    func availableSchools() -> [String] {
+        return CastingSchool.allCases.map { $0.rawValue }
+    }
+
+    func pickedSchools() -> [String] {
+        return try! spellSchoolsFilter.value()
+    }
+
     func availableClassses() -> [String] {
-        return try! spellClasses.value()
+        return CastingClass.allCases.map { (option: CastingClass) in option.rawValue }
     }
 
     func pickedClasses() -> [String] {
@@ -99,6 +125,14 @@ extension SpellListViewController: SpellListFilterViewDataSource {
 
     func onClassesPicked(_ list: [String]) {
         spellClassesFilter.onNext(list)
+    }
+
+    func onComponentsPicked(_ list: [String]) {
+        spellComponentsFilter.onNext(list)
+    }
+
+    func onSchoolsPicked(_ list: [String]) {
+        spellSchoolsFilter.onNext(list)
     }
 
 }

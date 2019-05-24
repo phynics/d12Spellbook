@@ -51,18 +51,13 @@ class DataController {
     var spellSchools: Observable<[String]> {
         return spells.map { spellsList in
             return spellsList.map {
-                $0.viewSchool
+                $0.viewSchool.rawValue
             }
                 .reduce(into: [String](), { (result, next) in
                     result.append(next)
                 })
                 .unique()
         }
-    }
-
-    var spellClasses: Observable<[String]> {
-        let classNames = CastingClass.allCases .map { (option: CastingClass) in option.rawValue }
-        return Observable.just(classNames)
     }
 
     init() throws {

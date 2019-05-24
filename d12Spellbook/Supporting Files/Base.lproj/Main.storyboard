@@ -401,10 +401,10 @@
             </objects>
             <point key="canvasLocation" x="2908" y="913"/>
         </scene>
-        <!--Spell List Filter View-->
+        <!--Filter Options-->
         <scene sceneID="mtd-gD-kD0">
             <objects>
-                <viewController id="TyC-jh-dGb" customClass="SpellListFilterView" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Filter Options" id="TyC-jh-dGb" customClass="SpellListFilterView" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0eN-RL-4zg">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -17,7 +17,6 @@ class SpellDataViewModel: CoreStoreObject {
     let components = Value.Required<String>("components", initial: "")
     let descriptor = Value.Required<String>("descriptor", initial: "")
     let castingClasses = Value.Required<String>("castingClasses", initial: "")
-    let costlyComponent = Value.Required<Bool>("costlyComponent", initial: false)
     let range = Value.Required<String>("range", initial: "")
     let area = Value.Required<String>("area", initial: "")
     let effect = Value.Required<String>("effect", initial: "")
@@ -31,13 +30,18 @@ class SpellDataViewModel: CoreStoreObject {
     let dismissable = Value.Required<Bool>("dismissable", initial: false)
     let shortDescription = Value.Required<String>("shortDescription", initial: "")
 
+    let componentVerbal = Value.Required<Bool>("componentVerbal", initial: false)
+    let componentMaterial = Value.Required<Bool>("componentMaterial", initial: false)
+    let componentFocus = Value.Required<Bool>("componentFocus", initial: false)
+    let componentDivineFocus = Value.Required<Bool>("componentDivineFocus", initial: false)
+    let componentCost = Value.Required<Int>("componentCost", initial: 0)
 
     var viewName: String {
         return name.value
     }
 
-    var viewSchool: String {
-        return school.value
+    var viewSchool: CastingSchool {
+        return CastingSchool.init(rawValue: school.value.capitalizingFirstLetter()) ?? CastingSchool.Universal
     }
 
     var viewSubschools: String {
@@ -46,6 +50,10 @@ class SpellDataViewModel: CoreStoreObject {
 
     var viewDescriptors: String {
         return descriptor.value
+    }
+
+    var viewComponents: String {
+        return components.value
     }
 
     lazy var viewCastingClasses: [CastingClassSpellLevel] = decodeCastingClasses(json: castingClasses.value)
@@ -161,7 +169,6 @@ class SpellDataViewModel: CoreStoreObject {
         shortDescription.value = spell.description
         castingClasses.value = spell.spellLevel
         components.value = spell.components
-        costlyComponent.value = spell.costlyComponents.asBool
         range.value = spell.range
         area.value = spell.area
         effect.value = spell.effect
@@ -173,6 +180,18 @@ class SpellDataViewModel: CoreStoreObject {
         sr.value = spell.spellResistence
         mythic.value = spell.mythic.asBool
         mythicDescription.value = spell.mythicText
+
+        componentVerbal.value = spell.verbal.asBool
+        componentFocus.value = spell.focus.asBool
+        componentMaterial.value = spell.material.asBool
+        componentDivineFocus.value = spell.divineFocus.asBool
+
+        switch spell.materialCosts {
+        case let .value(val):
+            componentCost.value = val
+        case .none:
+            componentCost.value = 0
+        }
 
         var casterList: [CastingClassSpellLevel] = []
         casterList.append(CastingClassSpellLevel(castingClass: .sorcerer, spellLevel: spell.sor.asInt))
@@ -252,7 +271,28 @@ enum CastingClass: String, Codable, CaseIterable {
     case summonerUnchained = "Unchained Summoner"
 }
 
+enum CastingComponent: String, CaseIterable {
+    case Verbal = "Verbal"
+    case Material = "Material"
+    case Costly = "Costly"
+    case Focus = "Focus"
+    case DivineFocus = "Divine Focus"
+}
+
+enum CastingSchool: String, CaseIterable {
+    case Abjuration = "Abjuration"
+    case Conjuration = "Conjuration"
+    case Transmutation = "Transmutation"
+    case Illusion = "Illusion"
+    case Necromancy = "Necromancy"
+    case Enchantment = "Enchantment"
+    case Evocation = "Evocation"
+    case Divination = "Divination"
+    case Universal = "Universal"
+}
+
 struct CastingClassSpellLevel: Codable {
     let castingClass: CastingClass
     let spellLevel: Int
 }
+
