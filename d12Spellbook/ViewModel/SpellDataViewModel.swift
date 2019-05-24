@@ -58,21 +58,23 @@ class SpellDataViewModel: CoreStoreObject {
 
     lazy var viewCastingClasses: [CastingClassSpellLevel] = decodeCastingClasses(json: castingClasses.value)
 
-    var schoolsWithDescriptors: String {
+    var viewSchoolsWithDescriptors: String {
+        var schoolWithDesc = school.value.capitalizingFirstLetter()
         if subschool.value.count > 0
             || descriptor.value.count > 0 {
-            var schoolWithDesc = school.value
             var comma = false
             if subschool.value.count > 0,
                 descriptor.value.count > 0 {
                 comma = true
             }
             schoolWithDesc += " ["
+            schoolWithDesc += subschool.value
             schoolWithDesc += comma ? ", " : ""
+            schoolWithDesc += descriptor.value
             schoolWithDesc += "]"
             return schoolWithDesc
         }
-        return ""
+        return schoolWithDesc
     }
 
     var viewDescription: NSAttributedString {
@@ -97,7 +99,7 @@ class SpellDataViewModel: CoreStoreObject {
             viewDescription.append(schoolText)
             viewDescription.append(
                 NSMutableAttributedString(
-                    string: schoolsWithDescriptors
+                    string: viewSchoolsWithDescriptors
                 )
             )
             viewDescription.append(spacing)

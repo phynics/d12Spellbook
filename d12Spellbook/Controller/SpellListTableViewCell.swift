@@ -16,10 +16,7 @@ class SpellListTableViewCell: UITableViewCell {
     var spell: SpellDataViewModel? {
         didSet {
             nameLabel.text = spell?.name.value
-            levelLabel.text = spell?.viewCastingClasses
-                .filter { $0.spellLevel > 0}
-                .map { return "\($0.castingClass) \($0.spellLevel)" }
-                .joined(separator: ", ")
+            levelLabel.text = spell?.viewSchoolsWithDescriptors
         }
     }
 }

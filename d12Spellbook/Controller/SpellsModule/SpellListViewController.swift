@@ -35,6 +35,26 @@ class SpellListViewController: UIViewController {
                 .subscribe(self.spells.asObserver())
                 .disposed(by: disposeBag)
         }
+        
+        
+        let tableDataSource = RxTableViewSectionedReloadDataSource<LevelSectionOfSpellData>(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "spellCell") as? SpellListTableViewCell
+            cell?.spell = item
+            return cell!
+        })
+        
+        tableDataSource.sectionIndexTitles = { [weak self] arg in
+            if let classFilter = try? self?.spellClassesFilter.value() {
+                if classFilter.count == 1 {
+                    return arg.sectionModels.map {
+                        $0.header
+                    }
+                }
+            }
+            return []
+        }
+        
+        tableDataSource.titleForHeaderInSection = { dataSource, index in "Level \(dataSource.sectionModels[index].header)" }
 
         let searchResult = self.searchBar.rx.text // retrieve searchbar results
         .orEmpty
@@ -42,13 +62,13 @@ class SpellListViewController: UIViewController {
             .debounce(0.5, scheduler: backgroundScheduler)
 
         Observable.combineLatest(searchResult, spells, spellClassesFilter, spellComponentsFilter, spellSchoolsFilter)
-        { (searchText, spellsList, classFilter, componentFilter, schoolFilter) -> [SpellDataViewModel] in // combine and filter from data sources
+        { (searchText, spellsList, classFilter, componentFilter, schoolFilter) -> [LevelSectionOfSpellData] in // combine and filter from data sources
             var spells = spellsList
 
             if classFilter.count > 0 {
                 spells = spells.filter { (model) -> Bool in
                     model.viewCastingClasses
-                        .filter { $0.spellLevel > 0 }
+                        .filter { $0.spellLevel >= 0 }
                         .contains(where: { (ccsl) -> Bool in
                             return classFilter.contains(ccsl.castingClass.rawValue)
                         })
@@ -66,13 +86,26 @@ class SpellListViewController: UIViewController {
                     $0.viewName.lowercased().contains(searchText.lowercased())
                 }
             }
-            return spells
+            
+            if classFilter.count == 1 {
+                return Dictionary.init(grouping: spells, by: { spell in
+                    spell.viewCastingClasses
+                        .first(where: { $0.castingClass.rawValue == classFilter.first!})
+                        .map { $0.spellLevel }
+                })
+                    .map { (arg) -> LevelSectionOfSpellData in
+                        var (key, value) = arg
+                        value.sort(by: { a, b in a.viewSchoolsWithDescriptors.lexicographicallyPrecedes(b.viewSchoolsWithDescriptors) })
+                        return LevelSectionOfSpellData(header: String(describing: key ?? 0), items: value)
+                    }
+                    .sorted(by: { (a, b) -> Bool in
+                        return a.header.lexicographicallyPrecedes(b.header)
+                    })
+            }
+            return [LevelSectionOfSpellData(header: "", items: spells)]
         }
             .observeOn(MainScheduler.instance)
-            .bind(to: tableView.rx.items(cellIdentifier: "spellCell")) { (index, item, cell) in
-                let spellCell = cell as? SpellListTableViewCell
-                spellCell?.spell = item
-            }
+            .bind(to: tableView.rx.items(dataSource: tableDataSource))
             .disposed(by: disposeBag)
 
         tableView.rx.modelSelected(SpellDataViewModel.self)
