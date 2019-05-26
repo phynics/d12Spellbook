@@ -33,6 +33,7 @@ class SpellDataViewModel: CoreStoreObject {
     let componentVerbal = Value.Required<Bool>("componentVerbal", initial: false)
     let componentMaterial = Value.Required<Bool>("componentMaterial", initial: false)
     let componentFocus = Value.Required<Bool>("componentFocus", initial: false)
+    let componentSomatic = Value.Required<Bool>("componentSomatic", initial: false)
     let componentDivineFocus = Value.Required<Bool>("componentDivineFocus", initial: false)
     let componentCost = Value.Required<Int>("componentCost", initial: 0)
 
@@ -52,8 +53,27 @@ class SpellDataViewModel: CoreStoreObject {
         return descriptor.value
     }
 
-    var viewComponents: String {
-        return components.value
+    var viewComponents: [CastingComponent] {
+        var componentArray: [CastingComponent] = []
+        if componentVerbal.value {
+            componentArray.append(CastingComponent.Verbal)
+        }
+        if componentMaterial.value {
+            componentArray.append(CastingComponent.Material)
+        }
+        if componentFocus.value {
+            componentArray.append(CastingComponent.Focus)
+        }
+        if componentDivineFocus.value {
+            componentArray.append(CastingComponent.DivineFocus)
+        }
+        if componentCost.value > 0 {
+            componentArray.append(CastingComponent.Costly)
+        }
+        if componentSomatic.value {
+            componentArray.append(CastingComponent.Somatic)
+        }
+        return componentArray
     }
 
     lazy var viewCastingClasses: [CastingClassSpellLevel] = decodeCastingClasses(json: castingClasses.value)
@@ -187,6 +207,7 @@ class SpellDataViewModel: CoreStoreObject {
         componentFocus.value = spell.focus.asBool
         componentMaterial.value = spell.material.asBool
         componentDivineFocus.value = spell.divineFocus.asBool
+        componentSomatic.value = spell.somatic.asBool
 
         switch spell.materialCosts {
         case let .value(val):
@@ -275,10 +296,11 @@ enum CastingClass: String, Codable, CaseIterable {
 
 enum CastingComponent: String, CaseIterable {
     case Verbal = "Verbal"
+    case Somatic = "Somatic"
     case Material = "Material"
-    case Costly = "Costly"
     case Focus = "Focus"
     case DivineFocus = "Divine Focus"
+    case Costly = "Costly"
 }
 
 enum CastingSchool: String, CaseIterable {

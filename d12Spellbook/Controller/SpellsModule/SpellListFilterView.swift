@@ -37,17 +37,18 @@ class SpellListFilterView: FormViewController {
                 state: dataSource.pickedSchools(),
                 callback: { [weak self] result in self?.dataSource.onSchoolsPicked(result) }
             )
-            +++ prepareMultipleChoiceSection(
+            +++ prepareComponentsSection(
                 title: componentTitle,
                 options: dataSource.availableComponents(),
                 state: dataSource.pickedComponents(),
-                callback: { [weak self] result in self?.dataSource.onComponentsPicked(result) }
+                filterOptions: dataSource.availableComponentsFilter(),
+                filterState: dataSource.pickedComponentsFilter()
             )
 
     }
 
     func prepareMultipleChoiceSection(title: String, options: [String], state: [String], callback: @escaping ([String]) -> Void) -> Section {
-        let classesSection = SelectableSection<ListCheckRow<String>>(title, selectionType: .multipleSelection)
+        let section = SelectableSection<ListCheckRow<String>>(title, selectionType: .multipleSelection)
 
         let optionRows = options.map { option in
             ListCheckRow<String>(option) { listRow in
@@ -58,7 +59,7 @@ class SpellListFilterView: FormViewController {
         }
 
         for row in optionRows {
-            classesSection <<< row
+            section <<< row
         }
 
         let optionObservables = optionRows.map {
@@ -70,7 +71,47 @@ class SpellListFilterView: FormViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { result in callback(result) })
             .disposed(by: disposeBag)
-        return classesSection
+        return section
+    }
+    
+    func prepareComponentsSection(title: String, options: [String], state: [String], filterOptions: [String], filterState: String) -> Section {
+        let section = SelectableSection<ListCheckRow<String>>(title, selectionType: .multipleSelection)
+        
+        let optionRows = options.map { option in
+            ListCheckRow<String>(option) { listRow in
+                listRow.title = option
+                listRow.selectableValue = option
+                listRow.value = state.contains(option) ? option : nil
+            }
+        }
+        
+        let segmentedRow = SegmentedRow<String>("filteringType") {
+            $0.options = filterOptions
+            $0.value = filterState
+            }
+        
+        section <<< segmentedRow
+        
+        for row in optionRows {
+            section <<< row
+        }
+        
+        segmentedRow.rx.value.asObservable()
+            .filter { $0 != nil }.map { $0! }
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: {[weak self] result in self?.dataSource.onComponentsFilterPicked(result)})
+            .disposed(by: disposeBag)
+        
+        let optionObservables = optionRows.map {
+            $0.rx.value.asObservable()
+        }
+        
+        Observable.combineLatest(optionObservables)
+            .map { $0.filter { $0 != nil }.map { $0! } }
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: {[weak self] result in self?.dataSource.onComponentsPicked(result) })
+            .disposed(by: disposeBag)
+        return section
     }
 }
 
@@ -80,11 +121,15 @@ protocol SpellListFilterViewDataSource {
 
     func availableComponents() -> [String]
     func pickedComponents() -> [String]
+    
+    func availableComponentsFilter() -> [String]
+    func pickedComponentsFilter() -> String
 
     func availableSchools() -> [String]
     func pickedSchools() -> [String]
 
     func onClassesPicked(_: [String])
+    func onComponentsFilterPicked(_: String)
     func onComponentsPicked(_: [String])
     func onSchoolsPicked(_: [String])
 }

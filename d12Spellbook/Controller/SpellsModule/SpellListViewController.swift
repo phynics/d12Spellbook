@@ -22,6 +22,7 @@ class SpellListViewController: UIViewController {
     var spellClassesFilter = BehaviorSubject<[String]>(value: [])
     var spellSchoolsFilter = BehaviorSubject<[String]>(value: [])
     var spellComponentsFilter = BehaviorSubject<[String]>(value: [])
+    var spellComponentsFilterMethod = BehaviorSubject<FilterMethod>(value: .Include)
     var disposeBag = DisposeBag()
 
 
@@ -54,15 +55,21 @@ class SpellListViewController: UIViewController {
             return []
         }
         
-        tableDataSource.titleForHeaderInSection = { dataSource, index in "Level \(dataSource.sectionModels[index].header)" }
+        tableDataSource.titleForHeaderInSection = { dataSource, index in
+            let header = dataSource.sectionModels[index].header
+            if header.count > 0 {
+                return "Level \(dataSource.sectionModels[index].header)"
+            }
+            return ""
+        }
 
         let searchResult = self.searchBar.rx.text // retrieve searchbar results
         .orEmpty
             .distinctUntilChanged()
             .debounce(0.5, scheduler: backgroundScheduler)
 
-        Observable.combineLatest(searchResult, spells, spellClassesFilter, spellComponentsFilter, spellSchoolsFilter)
-        { (searchText, spellsList, classFilter, componentFilter, schoolFilter) -> [LevelSectionOfSpellData] in // combine and filter from data sources
+        Observable.combineLatest(searchResult, spells, spellClassesFilter, spellComponentsFilter, spellComponentsFilterMethod, spellSchoolsFilter)
+        { (searchText, spellsList, classFilter, componentFilter, componentFilterMethod, schoolFilter) -> [LevelSectionOfSpellData] in // combine and filter from data sources
             var spells = spellsList
 
             if classFilter.count > 0 {
@@ -87,6 +94,31 @@ class SpellListViewController: UIViewController {
                 }
             }
             
+            if componentFilter.count > 0 {
+                spells = spells.filter { (model) -> Bool in
+                    switch componentFilterMethod {
+                    case .Exclude:
+                        return !model.viewComponents
+                            .contains(where: { (component) -> Bool in
+                                return componentFilter.contains(component.rawValue)
+                            })
+                    case .Include:
+                        return model.viewComponents
+                                .contains(where: { (component) -> Bool in
+                                    return componentFilter.contains(component.rawValue)
+                                })
+                    case .Match:
+                        return componentFilter.allSatisfy({ (predicateComponent) -> Bool in
+                            if let predicateComponent = CastingComponent(rawValue: predicateComponent) {
+                                return model.viewComponents.contains(predicateComponent)
+                            } else {
+                                return false
+                            }
+                        })
+                    }
+                }
+            }
+ 
             if classFilter.count == 1 {
                 return Dictionary.init(grouping: spells, by: { spell in
                     spell.viewCastingClasses
@@ -132,12 +164,26 @@ class SpellListViewController: UIViewController {
 }
 
 extension SpellListViewController: SpellListFilterViewDataSource {
+    func availableComponentsFilter() -> [String] {
+        return FilterMethod.allCases.map { $0.rawValue }
+    }
+    
+    func pickedComponentsFilter() -> String {
+        return try! spellComponentsFilterMethod.value().rawValue
+    }
+    
+    func onComponentsFilterPicked(_ list: String) {
+        if let filterMethod = FilterMethod(rawValue: list)  {
+            spellComponentsFilterMethod.onNext(filterMethod)
+        }
+    }
+    
     func availableComponents() -> [String] {
         return CastingComponent.allCases.map { $0.rawValue }
     }
 
     func pickedComponents() -> [String] {
-        return try! spellSchoolsFilter.value()
+        return try! spellComponentsFilter.value()
     }
 
     func availableSchools() -> [String] {
@@ -182,4 +228,10 @@ extension LevelSectionOfSpellData: SectionModelType {
         self = original
         self.items = items
     }
+}
+
+enum FilterMethod: String, CaseIterable {
+    case Match = "AND"
+    case Include = "OR"
+    case Exclude = "NOT"
 }
