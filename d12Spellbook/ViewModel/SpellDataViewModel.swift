@@ -126,7 +126,13 @@ class SpellDataViewModel: CoreStoreObject {
         }
         if castingClasses.value.count > 0 {
             viewDescription.append(levelText)
-            viewDescription.append(NSMutableAttributedString(string: castingClasses.value))
+            viewDescription.append(
+                NSMutableAttributedString(
+                    string: viewCastingClasses.filter { $0.spellLevel >= 0 }
+                        .map { "\($0.castingClass.rawValue) \($0.spellLevel)" }
+                        .joined(separator: ", ")
+                )
+            )
             viewDescription.append(spacing)
         }
         if components.value.count > 0 {

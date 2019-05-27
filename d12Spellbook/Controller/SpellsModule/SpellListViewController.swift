@@ -143,15 +143,7 @@ class SpellListViewController: UIViewController {
         tableView.rx.modelSelected(SpellDataViewModel.self)
             .observeOn(MainScheduler.instance)
             .subscribe { [weak self] model in
-                guard let strongSelf = self else {
-                    return
-                }
-                guard let detailVC = strongSelf.storyboard?
-                    .instantiateViewController(withIdentifier: "SpellDetailViewController") as? SpellListDetailView else {
-                        return
-                }
-
-                strongSelf.navigationController?.pushViewController(detailVC, animated: true)
+                self?.performSegue(withIdentifier: "spellDetails", sender: nil)
             }
             .disposed(by: disposeBag)
     }
@@ -159,6 +151,13 @@ class SpellListViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? SpellListFilterView {
             destination.dataSource = self
+        }
+        if let destination = segue.destination as? SpellListDetailView {
+            if let selected = tableView.indexPathForSelectedRow {
+                if let spellCell = self.tableView.cellForRow(at: selected) as? SpellListTableViewCell? {
+                    destination.spell = spellCell?.spell
+                }
+            }
         }
     }
 }
