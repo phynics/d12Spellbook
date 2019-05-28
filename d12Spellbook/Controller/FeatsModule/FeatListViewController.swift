@@ -53,7 +53,7 @@ class FeatListViewController: UIViewController {
                 .distinctUntilChanged()
                 .debounce(0.5, scheduler: MainScheduler.instance)
         }
-            .flatMap { [weak self] (searchText) -> Observable<[FeatDataViewModel]> in
+            .flatMap { [weak self] (searchText) -> Observable<[FeatDataInternalModel]> in
                 let sourceFilter = try? self?.featSources.value()
                     .filter {
                         $0.picked
@@ -199,7 +199,7 @@ struct SectionOfFeatDataViewModel {
 }
 
 extension SectionOfFeatDataViewModel: SectionModelType {
-    typealias Item = FeatDataViewModel
+    typealias Item = FeatDataInternalModel
     init(original: SectionOfFeatDataViewModel, items: [Item]) {
         self = original
         self.items = items

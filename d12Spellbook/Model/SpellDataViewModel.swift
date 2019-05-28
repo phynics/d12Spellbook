@@ -9,7 +9,7 @@
 import UIKit
 import CoreStore
 
-class SpellDataViewModel: CoreStoreObject {
+class SpellDataInternalModel: CoreStoreObject {
 
     let name = Value.Required<String>("name", initial: "")
     let school = Value.Required<String>("school", initial: "")
@@ -189,7 +189,7 @@ class SpellDataViewModel: CoreStoreObject {
         return viewDescription
     }
 
-    func populate(withModel spell: SpellDataModelPfCommunity) {
+    func populate(withModel spell: SpellDataModelJSON) {
         name.value = spell.name
         school.value = spell.school
         subschool.value = spell.subschool

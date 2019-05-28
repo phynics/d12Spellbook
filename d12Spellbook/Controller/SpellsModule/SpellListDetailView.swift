@@ -17,7 +17,7 @@ class SpellListDetailView: UIViewController {
         self.dismiss(animated: true)
     }
     
-    var spell: SpellDataViewModel?
+    var spell: SpellDataInternalModel?
     
     override func viewDidLoad() {
         if let spell = spell {

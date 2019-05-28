@@ -15,7 +15,7 @@ class FeatCardDetailViewController: UIViewController {
     @IBOutlet weak var descLabel: UILabel!
     @IBOutlet weak var navTitle: UINavigationItem!
     
-    var sourceFeat: FeatDataViewModel?
+    var sourceFeat: FeatDataInternalModel?
     
     @IBAction func onBackButtonPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)

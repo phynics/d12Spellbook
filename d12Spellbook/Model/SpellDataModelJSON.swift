@@ -7,7 +7,7 @@
 //
 
 import Foundation
-struct SpellDataModelPfCommunity: Codable {
+struct SpellDataModelJSON: Codable {
     let name: String
     let school: String
     let subschool: String
@@ -171,11 +171,11 @@ enum NullOrInt: Codable {
     
 }
 
-extension SpellDataModelPfCommunity {
-    static func createFrom(JsonData data: Data) throws -> [SpellDataModelPfCommunity] {
+extension SpellDataModelJSON {
+    static func createFrom(JsonData data: Data) throws -> [SpellDataModelJSON] {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let rawDecode = try decoder.decode([String: SpellDataModelPfCommunity].self, from: data)
+        let rawDecode = try decoder.decode([String: SpellDataModelJSON].self, from: data)
         let spellList = Array(rawDecode.values).sorted { (a, b) -> Bool in
             return a.name.lexicographicallyPrecedes(b.name)
         }

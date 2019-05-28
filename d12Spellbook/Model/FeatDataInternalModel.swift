@@ -9,7 +9,7 @@
 import UIKit
 import CoreStore
 
-class FeatDataViewModel: CoreStoreObject {
+class FeatDataInternalModel: CoreStoreObject {
     
     let featBenefit = Value.Required<String>("benefit", initial: "")
     let featNormal = Value.Required<String>("normal", initial: "")
@@ -114,7 +114,7 @@ class FeatDataViewModel: CoreStoreObject {
         return typeText
     }
     
-    func populate(withModel feat: FeatDataModelPfCommunity) {
+    func populate(withModel feat: FeatDataModelJSON) {
         featBenefit.value = feat.benefit
         featNormal.value = feat.normal
         featSpecial.value = feat.special

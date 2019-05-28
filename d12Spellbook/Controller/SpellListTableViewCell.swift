@@ -13,7 +13,7 @@ class SpellListTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var levelLabel: UILabel!
     
-    var spell: SpellDataViewModel? {
+    var spell: SpellDataInternalModel? {
         didSet {
             nameLabel.text = spell?.name.value
             levelLabel.text = spell?.viewSchoolsWithDescriptors

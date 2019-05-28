@@ -24,8 +24,8 @@ class DataController {
             CoreStoreSchema(
                 modelVersion: "V1",
                 entities: [
-                    Entity<FeatDataViewModel>("FeatDataViewModel"),
-                    Entity<SpellDataViewModel>("SpellDataViewModel")
+                    Entity<FeatDataInternalModel>("FeatDataViewModel"),
+                    Entity<SpellDataInternalModel>("SpellDataViewModel")
                 ]
             )
         )
@@ -40,14 +40,14 @@ class DataController {
 
     static func loadFeatDataFrom(json: Data, force: Bool = false) -> Observable<Void> {
         return CoreStore.rx.perform(asynchronous: { (transaction) -> Void in
-            let loadedFeats = try FeatDataModelPfCommunity.createFrom(JsonData: json)
+            let loadedFeats = try FeatDataModelJSON.createFrom(JsonData: json)
             if !force {
                 if self.defaults.bool(forKey: self.defaultsFeatKey) {
                     return
                 }
             }
             for feat in loadedFeats {
-                let newFeatObject = transaction.create(Into<FeatDataViewModel>())
+                let newFeatObject = transaction.create(Into<FeatDataInternalModel>())
                 newFeatObject.populate(withModel: feat)
             }
         })
@@ -64,14 +64,14 @@ class DataController {
 
     static func loadSpellDataFrom(json: Data, force: Bool = false) -> Observable<Void> {
         return CoreStore.rx.perform(asynchronous: { (transaction) -> Void in
-            let loadedSpells = try SpellDataModelPfCommunity.createFrom(JsonData: json)
+            let loadedSpells = try SpellDataModelJSON.createFrom(JsonData: json)
             if !force {
                 if self.defaults.bool(forKey: self.defaultsSpellKey) {
                     return
                 }
             }
             for spell in loadedSpells {
-                let newSpell = transaction.create(Into<SpellDataViewModel>())
+                let newSpell = transaction.create(Into<SpellDataInternalModel>())
                 newSpell.populate(withModel: spell)
             }
         })
@@ -85,16 +85,16 @@ class DataController {
             )
     }
 
-    static func fetchFeatBy(id: Int) -> FeatDataViewModel? {
+    static func fetchFeatBy(id: Int) -> FeatDataInternalModel? {
         return try! CoreStore.fetchOne(
-            From<FeatDataViewModel>(),
-            Where<FeatDataViewModel>("id == %d", id)
+            From<FeatDataInternalModel>(),
+            Where<FeatDataInternalModel>("id == %d", id)
         )
     }
 
-    static func feats(FromSources sourcesList: [String]?, WithTypes typesList: [String]?) -> Observable<[FeatDataViewModel]> {
+    static func feats(FromSources sourcesList: [String]?, WithTypes typesList: [String]?) -> Observable<[FeatDataInternalModel]> {
         return fetchFeats()
-            .map { featsList -> [FeatDataViewModel] in
+            .map { featsList -> [FeatDataInternalModel] in
                 var filteredList = featsList
                 if let sourcesList = sourcesList {
                     filteredList = filteredList.filter({ (feat) -> Bool in
@@ -103,7 +103,7 @@ class DataController {
                 }
                 return filteredList
             }
-            .map { featsList -> [FeatDataViewModel] in
+            .map { featsList -> [FeatDataInternalModel] in
                 var filteredList = featsList
                 if let typesList = typesList {
                     filteredList = filteredList.filter { feat in
@@ -115,7 +115,7 @@ class DataController {
                 return filteredList
         }
     }
-    
+
     static func featSources() -> Observable<[String]> {
         return fetchFeats()
             .map { featList in
@@ -123,35 +123,35 @@ class DataController {
                     .unique()
         }
     }
-    
+
     static func featTypes() -> Observable<[String]> {
         return fetchFeats()
             .map { featList in
-            let listOfTypes = featList
-                .map { feat -> [String] in
-                    let result = feat.viewTypes
-                        .split(separator: ",")
-                        .map({ (substr) -> String in
-                            if substr.hasPrefix(" ") {
-                                return String(substr.dropFirst()).capitalizingFirstLetter()
-                            } else {
-                                return String(substr).capitalizingFirstLetter()
-                            }
-                        })
-                    return result
-                }
-                .reduce(into: [String](), { (result, next) in
-                    result.append(contentsOf: next)
-                })
-            return listOfTypes.unique()
+                let listOfTypes = featList
+                    .map { feat -> [String] in
+                        let result = feat.viewTypes
+                            .split(separator: ",")
+                            .map({ (substr) -> String in
+                                if substr.hasPrefix(" ") {
+                                    return String(substr.dropFirst()).capitalizingFirstLetter()
+                                } else {
+                                    return String(substr).capitalizingFirstLetter()
+                                }
+                            })
+                        return result
+                    }
+                    .reduce(into: [String](), { (result, next) in
+                        result.append(contentsOf: next)
+                    })
+                return listOfTypes.unique()
         }
     }
-    
+
     static func spellSchools() -> Observable<[String]> {
         return fetchSpells().map { spellsList in
             return spellsList.map {
                 $0.viewSchool.rawValue
-                }
+            }
                 .reduce(into: [String](), { (result, next) in
                     result.append(next)
                 })
@@ -159,45 +159,47 @@ class DataController {
         }
     }
 
-    static func fetchFeats() -> Observable<[FeatDataViewModel]> {
+    static func fetchFeats() -> Observable<[FeatDataInternalModel]> {
         return Observable.just(
             try! CoreStore.fetchAll(
-                From<FeatDataViewModel>(),
-                OrderBy<FeatDataViewModel>(.ascending("name"))
+                From<FeatDataInternalModel>(),
+                OrderBy<FeatDataInternalModel>(.ascending("name"))
             )
         )
     }
 
-    static func fetchFeatsUpdating() -> Observable<[FeatDataViewModel]> {
-        return Observable<[FeatDataViewModel]>.concat(
+    static func fetchFeatsUpdating() -> Observable<[FeatDataInternalModel]> {
+        return Observable<[FeatDataInternalModel]>.concat(
             fetchFeats(),
             CoreStore.rx.monitorList(
-                From<FeatDataViewModel>(),
-                OrderBy<FeatDataViewModel>(.ascending("name"))
+                From<FeatDataInternalModel>(),
+                OrderBy<FeatDataInternalModel>(.ascending("name"))
             )
                 .filterListDidChange()
                 .flatMap { _ in fetchFeats() }
         )
     }
 
-    static func fetchSpells() -> Observable<[SpellDataViewModel]> {
-        return Observable<[SpellDataViewModel]>.just (
+    static func fetchSpells() -> Observable<[SpellDataInternalModel]> {
+        return Observable<[SpellDataInternalModel]>.just (
             try! CoreStore.fetchAll(
-                From<SpellDataViewModel>(),
-                OrderBy<SpellDataViewModel>(.ascending("name"))
-            )
+                From<SpellDataInternalModel>(),
+                OrderBy<SpellDataInternalModel>(.ascending("name"))
+            ),
+            scheduler: backgroundQueue
         )
     }
 
-    static func fetchSpellsUpdating() -> Observable<[SpellDataViewModel]> {
-        return Observable<[SpellDataViewModel]>.concat(
+    static func fetchSpellsUpdating() -> Observable<[SpellDataInternalModel]> {
+        return Observable<[SpellDataInternalModel]>.concat(
             fetchSpells(),
             CoreStore.rx.monitorList(
-                From<SpellDataViewModel>(),
-                OrderBy<SpellDataViewModel>(.ascending("name"))
+                From<SpellDataInternalModel>(),
+                OrderBy<SpellDataInternalModel>(.ascending("name"))
             )
                 .filterListDidChange()
                 .flatMap { _ in fetchSpells() }
         )
+            .observeOn(backgroundQueue)
     }
 }

@@ -10,14 +10,14 @@
 		662DB7977F1D0712A1E97EC8 /* Pods_d12Spellbook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E043B01C7A0719690A47D8E8 /* Pods_d12Spellbook.framework */; };
 		7D075B79222A00610078D4BF /* FeatsPathfinderCommunity221118.json in Resources */ = {isa = PBXBuildFile; fileRef = 7D075B78222A00610078D4BF /* FeatsPathfinderCommunity221118.json */; };
 		7D075B7D222A06350078D4BF /* Int+asBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B7C222A06350078D4BF /* Int+asBool.swift */; };
-		7D075B83222C3FE60078D4BF /* FeatDataModelPfCommunity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B82222C3FE60078D4BF /* FeatDataModelPfCommunity.swift */; };
-		7D075B85222C40370078D4BF /* FeatDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B84222C40370078D4BF /* FeatDataViewModel.swift */; };
+		7D075B83222C3FE60078D4BF /* FeatDataModelJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B82222C3FE60078D4BF /* FeatDataModelJSON.swift */; };
+		7D075B85222C40370078D4BF /* FeatDataInternalModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B84222C40370078D4BF /* FeatDataInternalModel.swift */; };
 		7D1813F42239D9A100D70356 /* String+CapitilizingFirstLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1813F32239D9A100D70356 /* String+CapitilizingFirstLetter.swift */; };
 		7D2ECCE4224E40F800C71535 /* SpellListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D2ECCE3224E40F800C71535 /* SpellListDetailView.swift */; };
 		7D5E31452236FBFE00EDB101 /* FeatSourceListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5E31442236FBFE00EDB101 /* FeatSourceListTableViewCell.swift */; };
 		7D5E31492236FCA300EDB101 /* FeatSourcePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5E31482236FCA300EDB101 /* FeatSourcePickerViewController.swift */; };
 		7D77A312223B38A800F8FAFD /* SpellsData22Nov2018.json in Resources */ = {isa = PBXBuildFile; fileRef = 7D77A311223B38A800F8FAFD /* SpellsData22Nov2018.json */; };
-		7D77A314223B3FB800F8FAFD /* SpellDataModelPfCommunity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77A313223B3FB800F8FAFD /* SpellDataModelPfCommunity.swift */; };
+		7D77A314223B3FB800F8FAFD /* SpellDataModelJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77A313223B3FB800F8FAFD /* SpellDataModelJSON.swift */; };
 		7D77A318223F137B00F8FAFD /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77A317223F137B00F8FAFD /* DataController.swift */; };
 		7DA3CB4B2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA3CB4A2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift */; };
 		7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */; };
@@ -39,14 +39,14 @@
 		70FA879BC2F8B6C60E74A7F9 /* Pods-d12Spellbook.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-d12Spellbook.release.xcconfig"; path = "Pods/Target Support Files/Pods-d12Spellbook/Pods-d12Spellbook.release.xcconfig"; sourceTree = "<group>"; };
 		7D075B78222A00610078D4BF /* FeatsPathfinderCommunity221118.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FeatsPathfinderCommunity221118.json; sourceTree = "<group>"; };
 		7D075B7C222A06350078D4BF /* Int+asBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+asBool.swift"; sourceTree = "<group>"; };
-		7D075B82222C3FE60078D4BF /* FeatDataModelPfCommunity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataModelPfCommunity.swift; sourceTree = "<group>"; };
-		7D075B84222C40370078D4BF /* FeatDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataViewModel.swift; sourceTree = "<group>"; };
+		7D075B82222C3FE60078D4BF /* FeatDataModelJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataModelJSON.swift; sourceTree = "<group>"; };
+		7D075B84222C40370078D4BF /* FeatDataInternalModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataInternalModel.swift; sourceTree = "<group>"; };
 		7D1813F32239D9A100D70356 /* String+CapitilizingFirstLetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+CapitilizingFirstLetter.swift"; sourceTree = "<group>"; };
 		7D2ECCE3224E40F800C71535 /* SpellListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellListDetailView.swift; sourceTree = "<group>"; };
 		7D5E31442236FBFE00EDB101 /* FeatSourceListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatSourceListTableViewCell.swift; sourceTree = "<group>"; };
 		7D5E31482236FCA300EDB101 /* FeatSourcePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatSourcePickerViewController.swift; sourceTree = "<group>"; };
 		7D77A311223B38A800F8FAFD /* SpellsData22Nov2018.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = SpellsData22Nov2018.json; sourceTree = "<group>"; };
-		7D77A313223B3FB800F8FAFD /* SpellDataModelPfCommunity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellDataModelPfCommunity.swift; sourceTree = "<group>"; };
+		7D77A313223B3FB800F8FAFD /* SpellDataModelJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellDataModelJSON.swift; sourceTree = "<group>"; };
 		7D77A317223F137B00F8FAFD /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		7DA3CB4A2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+hideKeyboardOnTouch.swift"; sourceTree = "<group>"; };
 		7DC31B042225E8C9009D8D72 /* FeatCardDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatCardDetailViewController.swift; sourceTree = "<group>"; };
@@ -106,8 +106,6 @@
 		7D8C0B92222F32BD000CA55E /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				7D075B84222C40370078D4BF /* FeatDataViewModel.swift */,
-				7DE78FFE22498B02003BC44A /* SpellDataViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -115,8 +113,10 @@
 		7D8C0B93222F32CC000CA55E /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				7D075B82222C3FE60078D4BF /* FeatDataModelPfCommunity.swift */,
-				7D77A313223B3FB800F8FAFD /* SpellDataModelPfCommunity.swift */,
+				7D075B84222C40370078D4BF /* FeatDataInternalModel.swift */,
+				7DE78FFE22498B02003BC44A /* SpellDataViewModel.swift */,
+				7D075B82222C3FE60078D4BF /* FeatDataModelJSON.swift */,
+				7D77A313223B3FB800F8FAFD /* SpellDataModelJSON.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -348,14 +348,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D77A314223B3FB800F8FAFD /* SpellDataModelPfCommunity.swift in Sources */,
+				7D77A314223B3FB800F8FAFD /* SpellDataModelJSON.swift in Sources */,
 				7DC880E12263C571000CFB10 /* SpellListFilterView.swift in Sources */,
 				7DE7900322499AC2003BC44A /* SpellListViewController.swift in Sources */,
 				7DE790052249A3EA003BC44A /* SpellListTableViewCell.swift in Sources */,
 				7DE790012249983B003BC44A /* EntryViewController.swift in Sources */,
 				7D075B7D222A06350078D4BF /* Int+asBool.swift in Sources */,
 				7DCCD4AE22249A1400722982 /* FeatListViewController.swift in Sources */,
-				7D075B85222C40370078D4BF /* FeatDataViewModel.swift in Sources */,
+				7D075B85222C40370078D4BF /* FeatDataInternalModel.swift in Sources */,
 				7DCCD4C22224A61E00722982 /* FeatListTableViewCell.swift in Sources */,
 				7D5E31452236FBFE00EDB101 /* FeatSourceListTableViewCell.swift in Sources */,
 				7DC31B052225E8C9009D8D72 /* FeatCardDetailViewController.swift in Sources */,
@@ -365,7 +365,7 @@
 				7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */,
 				7D77A318223F137B00F8FAFD /* DataController.swift in Sources */,
 				7D5E31492236FCA300EDB101 /* FeatSourcePickerViewController.swift in Sources */,
-				7D075B83222C3FE60078D4BF /* FeatDataModelPfCommunity.swift in Sources */,
+				7D075B83222C3FE60078D4BF /* FeatDataModelJSON.swift in Sources */,
 				7D2ECCE4224E40F800C71535 /* SpellListDetailView.swift in Sources */,
 				7DE78FFF22498B02003BC44A /* SpellDataViewModel.swift in Sources */,
 			);
@@ -517,7 +517,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F8S46T9XAN;
 				INFOPLIST_FILE = d12Spellbook/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.atkn.d12Spellbook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -533,7 +536,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F8S46T9XAN;
 				INFOPLIST_FILE = d12Spellbook/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.atkn.d12Spellbook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

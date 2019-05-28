@@ -12,9 +12,9 @@ class FeatListTableViewCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     
-    private var _sourceFeat: FeatDataViewModel?
+    private var _sourceFeat: FeatDataInternalModel?
     
-    var sourceFeat: FeatDataViewModel? {
+    var sourceFeat: FeatDataInternalModel? {
         get {
             return self._sourceFeat
         }

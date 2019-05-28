@@ -17,7 +17,7 @@ class SpellListViewController: UIViewController {
 
     let backgroundScheduler = ConcurrentDispatchQueueScheduler(qos: .background)
     
-    var spells = BehaviorSubject<[SpellDataViewModel]>(value: [])
+    var spells = BehaviorSubject<[SpellDataInternalModel]>(value: [])
     var spellClassesFilter = BehaviorSubject<[String]>(value: [])
     var spellSchoolsFilter = BehaviorSubject<[String]>(value: [])
     var spellComponentsFilter = BehaviorSubject<[String]>(value: [])
@@ -60,7 +60,7 @@ class SpellListViewController: UIViewController {
         }
 
         let searchResult = self.searchBar.rx.text // retrieve searchbar results
-        .orEmpty
+            .orEmpty
             .distinctUntilChanged()
             .debounce(0.5, scheduler: backgroundScheduler)
 
@@ -136,7 +136,7 @@ class SpellListViewController: UIViewController {
             .bind(to: tableView.rx.items(dataSource: tableDataSource))
             .disposed(by: disposeBag)
 
-        tableView.rx.modelSelected(SpellDataViewModel.self)
+        tableView.rx.modelSelected(SpellDataInternalModel.self)
             .observeOn(MainScheduler.instance)
             .subscribe { [weak self] model in
                 self?.performSegue(withIdentifier: "spellDetails", sender: nil)
@@ -213,11 +213,11 @@ extension SpellListViewController: SpellListFilterViewDataSource {
 
 struct LevelSectionOfSpellData {
     var header: String
-    var items: [SpellDataViewModel]
+    var items: [SpellDataInternalModel]
 }
 
 extension LevelSectionOfSpellData: SectionModelType {
-    typealias Item = SpellDataViewModel
+    typealias Item = SpellDataInternalModel
 
     init(original: LevelSectionOfSpellData, items: [Item]) {
         self = original

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct FeatDataModelPfCommunity: Codable {
+struct FeatDataModelJSON: Codable {
     var id: Int
     var name: String
     var type: String
@@ -123,11 +123,11 @@ struct FeatDataModelPfCommunity: Codable {
     }
 }
 
-extension FeatDataModelPfCommunity {
-    static func createFrom(JsonData data: Data) throws -> [FeatDataModelPfCommunity] {
+extension FeatDataModelJSON {
+    static func createFrom(JsonData data: Data) throws -> [FeatDataModelJSON] {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let rawDecode = try decoder.decode([String: FeatDataModelPfCommunity].self, from: data)
+        let rawDecode = try decoder.decode([String: FeatDataModelJSON].self, from: data)
         let featList = Array(rawDecode.values).sorted { (a, b) -> Bool in
             return a.name.lexicographicallyPrecedes(b.name)
         }
