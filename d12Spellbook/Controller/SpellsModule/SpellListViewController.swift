@@ -16,8 +16,7 @@ class SpellListViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
 
     let backgroundScheduler = ConcurrentDispatchQueueScheduler(qos: .background)
-
-    var dataController: DataController?
+    
     var spells = BehaviorSubject<[SpellDataViewModel]>(value: [])
     var spellClassesFilter = BehaviorSubject<[String]>(value: [])
     var spellSchoolsFilter = BehaviorSubject<[String]>(value: [])
@@ -31,12 +30,9 @@ class SpellListViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        if let dataController = self.dataController { // set up behaviorsubjects
-            dataController.spells
+        DataController.fetchSpellsUpdating()
                 .subscribe(self.spells.asObserver())
                 .disposed(by: disposeBag)
-        }
-        
         
         let tableDataSource = RxTableViewSectionedReloadDataSource<LevelSectionOfSpellData>(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
             let cell = tableView.dequeueReusableCell(withIdentifier: "spellCell") as? SpellListTableViewCell

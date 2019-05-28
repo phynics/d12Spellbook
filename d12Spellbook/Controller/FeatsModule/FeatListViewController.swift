@@ -16,8 +16,6 @@ class FeatListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
 
-
-    var dataController: DataController?
     let disposeBag = DisposeBag()
 
     typealias FeatToggle = (name: String, picked: Bool)
@@ -35,7 +33,7 @@ class FeatListViewController: UIViewController {
         super.viewDidLoad()
 
         hideKeyboardOnTouch()
-        
+
         let tableDataSource = RxTableViewSectionedReloadDataSource<SectionOfFeatDataViewModel>(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
             let cell = tableView.dequeueReusableCell(withIdentifier: "featCell")
             if let cell = cell as? FeatListTableViewCell {
@@ -43,46 +41,42 @@ class FeatListViewController: UIViewController {
             }
             return cell!
         })
-        
+
         tableDataSource.sectionIndexTitles = { arg in
             arg.sectionModels.map { $0.header }
         }
 
         refreshData.onNext(())
-        refreshData.flatMap {
+        refreshData.flatMap { _ in
             self.searchBar.rx.text
                 .orEmpty
                 .distinctUntilChanged()
                 .debounce(0.5, scheduler: MainScheduler.instance)
         }
             .flatMap { [weak self] (searchText) -> Observable<[FeatDataViewModel]> in
-                if let dataSource = self?.dataController {
-                    let sourceFilter = try? self?.featSources.value()
-                        .filter {
-                            $0.picked
-                        }
-                        .map {
-                            $0.name
+                let sourceFilter = try? self?.featSources.value()
+                    .filter {
+                        $0.picked
                     }
-                    let typeFilter = try? self?.featTypes.value()
-                        .filter {
-                            $0.picked
-                        }
-                        .map {
-                            $0.name
+                    .map {
+                        $0.name
+                }
+                let typeFilter = try? self?.featTypes.value()
+                    .filter {
+                        $0.picked
                     }
-                    return dataSource.feats(FromSources: sourceFilter, WithTypes: typeFilter)
-                        .map {
-                            return $0.filter {
-                                if searchText.count > 0 {
-                                    return $0.viewName.contains(searchText)
-                                } else {
-                                    return true
-                                }
+                    .map {
+                        $0.name
+                }
+                return DataController.feats(FromSources: sourceFilter, WithTypes: typeFilter)
+                    .map {
+                        return $0.filter {
+                            if searchText.count > 0 {
+                                return $0.viewName.contains(searchText)
+                            } else {
+                                return true
                             }
-                    }
-                } else {
-                    return Observable<[FeatDataViewModel]>.empty()
+                        }
                 }
             }
             .map { featModels in
@@ -99,66 +93,65 @@ class FeatListViewController: UIViewController {
             .bind(to: tableView.rx.items(dataSource: tableDataSource))
             .disposed(by: disposeBag)
 
-        if let dataSource = dataController {
-            dataSource.featSources
-                .map {
-                    $0.sorted(by:) { a, b -> Bool in
-                        if a.contains("PFRPG"), !b.contains("PFRPG") {
-                            return true
-                        } else if !a.contains("PFRPG"), b.contains("PFRPG") {
-                            return false
-                        } else if a.hasPrefix("AP"), !b.hasPrefix("AP") {
-                            return false
-                        } else if !a.hasPrefix("AP"), b.hasPrefix("AP") {
-                            return true
+        DataController.featSources()
+            .map {
+                $0.sorted(by:) { a, b -> Bool in
+                    if a.contains("PFRPG"), !b.contains("PFRPG") {
+                        return true
+                    } else if !a.contains("PFRPG"), b.contains("PFRPG") {
+                        return false
+                    } else if a.hasPrefix("AP"), !b.hasPrefix("AP") {
+                        return false
+                    } else if !a.hasPrefix("AP"), b.hasPrefix("AP") {
+                        return true
+                    } else {
+                        return a.lexicographicallyPrecedes(b)
+                    }
+                }
+            }
+            .map {
+                $0.map {
+                    (name: $0, picked: true)
+                }
+            }
+            .subscribe(self.featSources)
+            .disposed(by: disposeBag)
+
+        DataController.fetchFeatsUpdating().map {
+            $0.map { feat -> [String] in
+                let additionalTypes = feat.viewTypes
+                    .split(separator: ",")
+                    .map({ (substr) -> String in
+                        if substr.hasPrefix(" ") {
+                            return String(substr.dropFirst()).capitalizingFirstLetter()
                         } else {
-                            return a.lexicographicallyPrecedes(b)
+                            return String(substr).capitalizingFirstLetter()
                         }
-                    }
-                }
-                .map {
-                    $0.map {
-                        (name: $0, picked: true)
-                    }
-                }
-                .subscribe(self.featSources)
-                .disposed(by: disposeBag)
-
-            dataSource.feats.map {
-                $0.map { feat -> [String] in
-                    let additionalTypes = feat.viewTypes
-                        .split(separator: ",")
-                        .map({ (substr) -> String in
-                            if substr.hasPrefix(" ") {
-                                return String(substr.dropFirst()).capitalizingFirstLetter()
-                            } else {
-                                return String(substr).capitalizingFirstLetter()
-                            }
-                        })
-                    return additionalTypes
-                }
-            }
-                .map {
-                    $0.reduce([String](), { (acc, next) -> [String] in
-                        var result = acc
-                        result.append(contentsOf: next)
-                        return result
                     })
-                        .unique()
-                }
-                .map {
-                    $0.map {
-                        (name: $0, picked: true)
-                    }
-                }
-                .subscribe(self.featTypes.asObserver())
-                .disposed(by: disposeBag)
-
-            self.tableView.rx.itemSelected.subscribe { [weak self] event in
-                self?.performSegue(withIdentifier: "showFeatDetail", sender: nil)
+                return additionalTypes
             }
-                .disposed(by: disposeBag)
         }
+            .map {
+                $0.reduce([String](), { (acc, next) -> [String] in
+                    var result = acc
+                    result.append(contentsOf: next)
+                    return result
+                })
+                    .unique()
+            }
+            .map {
+                $0.map {
+                    (name: $0, picked: true)
+                }
+            }
+            .subscribe(self.featTypes.asObserver())
+            .disposed(by: disposeBag)
+
+        self.tableView.rx.itemSelected.subscribe { [weak self] event in
+            self?.performSegue(withIdentifier: "showFeatDetail", sender: nil)
+        }
+            .disposed(by: disposeBag)
+
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

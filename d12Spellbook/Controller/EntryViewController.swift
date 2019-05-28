@@ -20,12 +20,14 @@ class EntryViewController: UITabBarController {
     let spellDataSourceName = "SpellsData22Nov2018"
 
     override func viewDidLoad() {
-        dataController = try? DataController()
+        guard (try? DataController.setup()) != nil else {
+            return
+        }
 
         if let path = Bundle.main.url(forResource: jsonDataSourceName, withExtension: "json") {
             do {
                 let data = try Data(contentsOf: path)
-                self.dataController?.loadFeatDataFrom(json: data)
+                DataController.loadFeatDataFrom(json: data)
                     .subscribe()
                     .disposed(by: disposeBag)
             } catch {
@@ -36,20 +38,12 @@ class EntryViewController: UITabBarController {
         if let path = Bundle.main.url(forResource: spellDataSourceName, withExtension: "json") {
             do {
                 let data = try Data(contentsOf: path)
-                self.dataController?.loadSpellDataFrom(json: data)
+                DataController.loadSpellDataFrom(json: data)
                     .subscribe()
                     .disposed(by: disposeBag)
             } catch {
                 print("Error loading spells: \(error)")
             }
         }
-        
-        let featVC = (viewControllers![0] as! UINavigationController)
-            .topViewController as! FeatListViewController
-        let spellVC = (viewControllers![1] as! UINavigationController)
-            .topViewController as! SpellListViewController
-        
-        featVC.dataController = dataController
-        spellVC.dataController = dataController
     }
 }

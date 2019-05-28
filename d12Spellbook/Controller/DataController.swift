@@ -12,55 +12,14 @@ import RxCoreStore
 import RxSwift
 
 class DataController {
-    var defaults = UserDefaults.standard
-    let defaultsFeatKey = "LoadedFeatData"
-    let defaultsSpellKey = "LoadedSpellsData"
+    static var defaults = UserDefaults.standard
+    static let defaultsFeatKey = "LoadedFeatData"
+    static let defaultsSpellKey = "LoadedSpellsData"
 
-    let spells: Observable<[SpellDataViewModel]>
-    let feats: Observable<[FeatDataViewModel]>
+    static let backgroundQueue = SerialDispatchQueueScheduler(qos: .background)
 
-    var featSources: Observable<[String]> {
-        return feats.map { featList in
-            featList.map { $0.viewSourceName }
-                .unique()
-        }
-    }
 
-    var featTypes: Observable<[String]> {
-        return feats.map { featList in
-            let listOfTypes = featList
-                .map { feat -> [String] in
-                    let result = feat.viewTypes
-                        .split(separator: ",")
-                        .map({ (substr) -> String in
-                            if substr.hasPrefix(" ") {
-                                return String(substr.dropFirst()).capitalizingFirstLetter()
-                            } else {
-                                return String(substr).capitalizingFirstLetter()
-                            }
-                        })
-                    return result
-                }
-                .reduce(into: [String](), { (result, next) in
-                    result.append(contentsOf: next)
-                })
-            return listOfTypes.unique()
-        }
-    }
-
-    var spellSchools: Observable<[String]> {
-        return spells.map { spellsList in
-            return spellsList.map {
-                $0.viewSchool.rawValue
-            }
-                .reduce(into: [String](), { (result, next) in
-                    result.append(next)
-                })
-                .unique()
-        }
-    }
-
-    init() throws {
+    static func setup() throws {
         CoreStore.defaultStack = DataStack(
             CoreStoreSchema(
                 modelVersion: "V1",
@@ -77,14 +36,9 @@ class DataController {
                 localStorageOptions: .recreateStoreOnModelMismatch
             )
         )
-
-        spells = DataController._fetchSpellsUpdating()
-            .share(replay: 1, scope: .whileConnected)
-        feats = DataController._fetchFeatsUpdating()
-            .share(replay: 1, scope: .whileConnected)
     }
 
-    func loadFeatDataFrom(json: Data, force: Bool = false) -> Observable<Void> {
+    static func loadFeatDataFrom(json: Data, force: Bool = false) -> Observable<Void> {
         return CoreStore.rx.perform(asynchronous: { (transaction) -> Void in
             let loadedFeats = try FeatDataModelPfCommunity.createFrom(JsonData: json)
             if !force {
@@ -108,7 +62,7 @@ class DataController {
             )
     }
 
-    func loadSpellDataFrom(json: Data, force: Bool = false) -> Observable<Void> {
+    static func loadSpellDataFrom(json: Data, force: Bool = false) -> Observable<Void> {
         return CoreStore.rx.perform(asynchronous: { (transaction) -> Void in
             let loadedSpells = try SpellDataModelPfCommunity.createFrom(JsonData: json)
             if !force {
@@ -131,15 +85,15 @@ class DataController {
             )
     }
 
-    func fetchFeatBy(id: Int) -> FeatDataViewModel? {
+    static func fetchFeatBy(id: Int) -> FeatDataViewModel? {
         return try! CoreStore.fetchOne(
             From<FeatDataViewModel>(),
             Where<FeatDataViewModel>("id == %d", id)
         )
     }
 
-    func feats(FromSources sourcesList: [String]?, WithTypes typesList: [String]?) -> Observable<[FeatDataViewModel]> {
-        return self.feats
+    static func feats(FromSources sourcesList: [String]?, WithTypes typesList: [String]?) -> Observable<[FeatDataViewModel]> {
+        return fetchFeats()
             .map { featsList -> [FeatDataViewModel] in
                 var filteredList = featsList
                 if let sourcesList = sourcesList {
@@ -161,50 +115,89 @@ class DataController {
                 return filteredList
         }
     }
+    
+    static func featSources() -> Observable<[String]> {
+        return fetchFeats()
+            .map { featList in
+                featList.map { $0.viewSourceName }
+                    .unique()
+        }
+    }
+    
+    static func featTypes() -> Observable<[String]> {
+        return fetchFeats()
+            .map { featList in
+            let listOfTypes = featList
+                .map { feat -> [String] in
+                    let result = feat.viewTypes
+                        .split(separator: ",")
+                        .map({ (substr) -> String in
+                            if substr.hasPrefix(" ") {
+                                return String(substr.dropFirst()).capitalizingFirstLetter()
+                            } else {
+                                return String(substr).capitalizingFirstLetter()
+                            }
+                        })
+                    return result
+                }
+                .reduce(into: [String](), { (result, next) in
+                    result.append(contentsOf: next)
+                })
+            return listOfTypes.unique()
+        }
+    }
+    
+    static func spellSchools() -> Observable<[String]> {
+        return fetchSpells().map { spellsList in
+            return spellsList.map {
+                $0.viewSchool.rawValue
+                }
+                .reduce(into: [String](), { (result, next) in
+                    result.append(next)
+                })
+                .unique()
+        }
+    }
 
-    private static func _fetchFeats() -> [FeatDataViewModel] {
-        do {
-            return try CoreStore.fetchAll(
+    static func fetchFeats() -> Observable<[FeatDataViewModel]> {
+        return Observable.just(
+            try! CoreStore.fetchAll(
                 From<FeatDataViewModel>(),
                 OrderBy<FeatDataViewModel>(.ascending("name"))
             )
-        } catch {
-            return []
-        }
-
-    }
-
-    private static func _fetchFeatsUpdating() -> Observable<[FeatDataViewModel]> {
-
-        return CoreStore.rx.monitorList(
-            From<FeatDataViewModel>(),
-            OrderBy<FeatDataViewModel>(.ascending("name"))
         )
-            .filterListDidChange()
-            .map { _ in _fetchFeats() }
-            .startWith(_fetchFeats())
     }
 
-    private static func _fetchSpells() -> [SpellDataViewModel] {
-        do {
-            let spells = try CoreStore.fetchAll(
+    static func fetchFeatsUpdating() -> Observable<[FeatDataViewModel]> {
+        return Observable<[FeatDataViewModel]>.concat(
+            fetchFeats(),
+            CoreStore.rx.monitorList(
+                From<FeatDataViewModel>(),
+                OrderBy<FeatDataViewModel>(.ascending("name"))
+            )
+                .filterListDidChange()
+                .flatMap { _ in fetchFeats() }
+        )
+    }
+
+    static func fetchSpells() -> Observable<[SpellDataViewModel]> {
+        return Observable<[SpellDataViewModel]>.just (
+            try! CoreStore.fetchAll(
                 From<SpellDataViewModel>(),
                 OrderBy<SpellDataViewModel>(.ascending("name"))
             )
-            return spells
-        } catch {
-            print("Error fetching spells: \(error)")
-            return []
-        }
+        )
     }
 
-    private static func _fetchSpellsUpdating() -> Observable<[SpellDataViewModel]> {
-        return CoreStore.rx.monitorList(
-            From<SpellDataViewModel>(),
-            OrderBy<SpellDataViewModel>(.ascending("name"))
+    static func fetchSpellsUpdating() -> Observable<[SpellDataViewModel]> {
+        return Observable<[SpellDataViewModel]>.concat(
+            fetchSpells(),
+            CoreStore.rx.monitorList(
+                From<SpellDataViewModel>(),
+                OrderBy<SpellDataViewModel>(.ascending("name"))
+            )
+                .filterListDidChange()
+                .flatMap { _ in fetchSpells() }
         )
-            .filterListDidChange()
-            .map { _ in _fetchSpells() }
-            .startWith(_fetchSpells())
     }
 }

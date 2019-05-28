@@ -68,7 +68,6 @@ class SpellListFilterView: FormViewController {
 
         Observable.combineLatest(optionObservables)
             .map { $0.filter { $0 != nil }.map { $0! } }
-            .observeOn(MainScheduler.instance)
             .subscribe(onNext: { result in callback(result) })
             .disposed(by: disposeBag)
         return section
@@ -98,7 +97,6 @@ class SpellListFilterView: FormViewController {
         
         segmentedRow.rx.value.asObservable()
             .filter { $0 != nil }.map { $0! }
-            .observeOn(MainScheduler.instance)
             .subscribe(onNext: {[weak self] result in self?.dataSource.onComponentsFilterPicked(result)})
             .disposed(by: disposeBag)
         
@@ -108,7 +106,6 @@ class SpellListFilterView: FormViewController {
         
         Observable.combineLatest(optionObservables)
             .map { $0.filter { $0 != nil }.map { $0! } }
-            .observeOn(MainScheduler.instance)
             .subscribe(onNext: {[weak self] result in self?.dataSource.onComponentsPicked(result) })
             .disposed(by: disposeBag)
         return section
