@@ -17,12 +17,12 @@ class SpellListDetailView: UIViewController {
         self.dismiss(animated: true)
     }
     
-    var spell: SpellDataInternalModel?
+    var spell: SpellDataViewModel?
     
     override func viewDidLoad() {
         if let spell = spell {
-            self.titleLabel.text = spell.viewName
-            self.descriptionLabel.attributedText = spell.viewDescription
+            self.titleLabel.text = spell.name
+            self.descriptionLabel.attributedText = spell.description
             self.navTitle.title = "Spell Details"
         }
     }

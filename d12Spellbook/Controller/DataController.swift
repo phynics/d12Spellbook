@@ -16,16 +16,13 @@ class DataController {
     static let defaultsFeatKey = "LoadedFeatData"
     static let defaultsSpellKey = "LoadedSpellsData"
 
-    static let backgroundQueue = SerialDispatchQueueScheduler(qos: .background)
-
-
     static func setup() throws {
         CoreStore.defaultStack = DataStack(
             CoreStoreSchema(
                 modelVersion: "V1",
                 entities: [
-                    Entity<FeatDataInternalModel>("FeatDataViewModel"),
-                    Entity<SpellDataInternalModel>("SpellDataViewModel")
+                    Entity<FeatDataInternalModel>("FeatDataInternalModel"),
+                    Entity<SpellDataInternalModel>("SpellDataInternalModel")
                 ]
             )
         )
@@ -92,23 +89,23 @@ class DataController {
         )
     }
 
-    static func feats(FromSources sourcesList: [String]?, WithTypes typesList: [String]?) -> Observable<[FeatDataInternalModel]> {
-        return fetchFeats()
-            .map { featsList -> [FeatDataInternalModel] in
+    static func feats(FromSources sourcesList: [String]?, WithTypes typesList: [String]?) -> Observable<[FeatDataViewModel]> {
+        return fetchFeatsUpdating()
+            .map { featsList -> [FeatDataViewModel] in
                 var filteredList = featsList
                 if let sourcesList = sourcesList {
                     filteredList = filteredList.filter({ (feat) -> Bool in
-                        sourcesList.contains(feat.viewSourceName)
+                        sourcesList.contains(feat.sourceName)
                     })
                 }
                 return filteredList
             }
-            .map { featsList -> [FeatDataInternalModel] in
+            .map { featsList -> [FeatDataViewModel] in
                 var filteredList = featsList
                 if let typesList = typesList {
                     filteredList = filteredList.filter { feat in
                         typesList.contains(where: { type -> Bool in
-                            return feat.viewTypes.contains(type)
+                            return feat.types.contains(type)
                         })
                     }
                 }
@@ -117,19 +114,19 @@ class DataController {
     }
 
     static func featSources() -> Observable<[String]> {
-        return fetchFeats()
+        return fetchFeatsUpdating()
             .map { featList in
-                featList.map { $0.viewSourceName }
+                featList.map { $0.sourceName }
                     .unique()
         }
     }
 
     static func featTypes() -> Observable<[String]> {
-        return fetchFeats()
+        return fetchFeatsUpdating()
             .map { featList in
                 let listOfTypes = featList
                     .map { feat -> [String] in
-                        let result = feat.viewTypes
+                        let result = feat.types
                             .split(separator: ",")
                             .map({ (substr) -> String in
                                 if substr.hasPrefix(" ") {
@@ -147,59 +144,55 @@ class DataController {
         }
     }
 
-    static func spellSchools() -> Observable<[String]> {
-        return fetchSpells().map { spellsList in
-            return spellsList.map {
-                $0.viewSchool.rawValue
+    private static func _fetchFeats() -> Observable<[FeatDataViewModel]> {
+        return CoreStore.rx.perform(asynchronous: { (transaction) -> [FeatDataViewModel] in
+            return try! transaction.fetchAll(
+                From<FeatDataInternalModel>(),
+                OrderBy<FeatDataInternalModel>(.ascending("name"))
+            )
+                .map {
+                    FeatDataViewModel.createFrom(Internal: $0)
             }
-                .reduce(into: [String](), { (result, next) in
-                    result.append(next)
-                })
-                .unique()
-        }
+        })
+            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+    }
+    
+    private static func _fetchSpells() -> Observable<[SpellDataViewModel]> {
+        return CoreStore.rx.perform(asynchronous: { (transaction) -> [SpellDataViewModel] in
+            return try! transaction.fetchAll(
+                From<SpellDataInternalModel>(),
+                OrderBy<SpellDataInternalModel>(.ascending("name"))
+                )
+                .map {
+                    SpellDataViewModel.createFrom(Internal: $0)
+            }
+        })
+            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
     }
 
-    static func fetchFeats() -> Observable<[FeatDataInternalModel]> {
-        return Observable.just(
-            try! CoreStore.fetchAll(
-                From<FeatDataInternalModel>(),
-                OrderBy<FeatDataInternalModel>(.ascending("name"))
-            )
-        )
-    }
-
-    static func fetchFeatsUpdating() -> Observable<[FeatDataInternalModel]> {
-        return Observable<[FeatDataInternalModel]>.concat(
-            fetchFeats(),
+    static func fetchFeatsUpdating() -> Observable<[FeatDataViewModel]> {
+        return Observable<[FeatDataViewModel]>.concat(
+            _fetchFeats(),
             CoreStore.rx.monitorList(
                 From<FeatDataInternalModel>(),
                 OrderBy<FeatDataInternalModel>(.ascending("name"))
             )
                 .filterListDidChange()
-                .flatMap { _ in fetchFeats() }
+                .flatMap { _ in _fetchFeats() }
         )
     }
 
-    static func fetchSpells() -> Observable<[SpellDataInternalModel]> {
-        return Observable<[SpellDataInternalModel]>.just (
-            try! CoreStore.fetchAll(
-                From<SpellDataInternalModel>(),
-                OrderBy<SpellDataInternalModel>(.ascending("name"))
-            ),
-            scheduler: backgroundQueue
-        )
-    }
-
-    static func fetchSpellsUpdating() -> Observable<[SpellDataInternalModel]> {
-        return Observable<[SpellDataInternalModel]>.concat(
-            fetchSpells(),
+    static func fetchSpellsUpdating() -> Observable<[SpellDataViewModel]> {
+        return Observable<[SpellDataViewModel]>.concat(
+            _fetchSpells(),
             CoreStore.rx.monitorList(
                 From<SpellDataInternalModel>(),
                 OrderBy<SpellDataInternalModel>(.ascending("name"))
             )
+                .do { print("preFilterChange") }
                 .filterListDidChange()
-                .flatMap { _ in fetchSpells() }
+                .do { print("postFilterChange") }
+                .flatMap { _ in _fetchSpells() }
         )
-            .observeOn(backgroundQueue)
     }
 }

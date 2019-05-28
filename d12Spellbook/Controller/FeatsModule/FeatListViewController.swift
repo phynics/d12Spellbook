@@ -53,7 +53,7 @@ class FeatListViewController: UIViewController {
                 .distinctUntilChanged()
                 .debounce(0.5, scheduler: MainScheduler.instance)
         }
-            .flatMap { [weak self] (searchText) -> Observable<[FeatDataInternalModel]> in
+            .flatMap { [weak self] (searchText) -> Observable<[FeatDataViewModel]> in
                 let sourceFilter = try? self?.featSources.value()
                     .filter {
                         $0.picked
@@ -72,7 +72,7 @@ class FeatListViewController: UIViewController {
                     .map {
                         return $0.filter {
                             if searchText.count > 0 {
-                                return $0.viewName.contains(searchText)
+                                return $0.name.contains(searchText)
                             } else {
                                 return true
                             }
@@ -80,7 +80,7 @@ class FeatListViewController: UIViewController {
                 }
             }
             .map { featModels in
-                return Dictionary.init(grouping: featModels, by: { $0.viewName.first! })
+                return Dictionary.init(grouping: featModels, by: { $0.name.first! })
                     .map { (arg) -> SectionOfFeatDataViewModel in
                         let (key, value) = arg
                         return SectionOfFeatDataViewModel(header: String(key), items: value)
@@ -119,7 +119,7 @@ class FeatListViewController: UIViewController {
 
         DataController.fetchFeatsUpdating().map {
             $0.map { feat -> [String] in
-                let additionalTypes = feat.viewTypes
+                let additionalTypes = feat.types
                     .split(separator: ",")
                     .map({ (substr) -> String in
                         if substr.hasPrefix(" ") {
@@ -155,7 +155,7 @@ class FeatListViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? FeatCardDetailViewController {
+        if let vc = segue.destination as? FeatListDetailView {
             if let selected = tableView.indexPathForSelectedRow {
                 if let featCell = self.tableView.cellForRow(at: selected) as? FeatListTableViewCell? {
                     vc.sourceFeat = featCell?.sourceFeat
@@ -199,7 +199,7 @@ struct SectionOfFeatDataViewModel {
 }
 
 extension SectionOfFeatDataViewModel: SectionModelType {
-    typealias Item = FeatDataInternalModel
+    typealias Item = FeatDataViewModel
     init(original: SectionOfFeatDataViewModel, items: [Item]) {
         self = original
         self.items = items

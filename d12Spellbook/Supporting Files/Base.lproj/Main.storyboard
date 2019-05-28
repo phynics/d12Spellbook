@@ -183,7 +183,7 @@
         <!--FeatDetailView-->
         <scene sceneID="OW3-co-TCe">
             <objects>
-                <viewController title="FeatDetailView" id="eBP-dt-HJ2" customClass="FeatCardDetailViewController" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="FeatDetailView" id="eBP-dt-HJ2" customClass="FeatListDetailView" customModule="d12Spellbook" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Mm9-tM-aGa">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

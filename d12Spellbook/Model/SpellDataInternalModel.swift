@@ -37,157 +37,6 @@ class SpellDataInternalModel: CoreStoreObject {
     let componentDivineFocus = Value.Required<Bool>("componentDivineFocus", initial: false)
     let componentCost = Value.Required<Int>("componentCost", initial: 0)
 
-    var viewName: String {
-        return name.value
-    }
-
-    var viewSchool: CastingSchool {
-        return CastingSchool.init(rawValue: school.value.capitalizingFirstLetter()) ?? CastingSchool.Universal
-    }
-
-    var viewSubschools: String {
-        return subschool.value
-    }
-
-    var viewDescriptors: String {
-        return descriptor.value
-    }
-
-    var viewComponents: [CastingComponent] {
-        var componentArray: [CastingComponent] = []
-        if componentVerbal.value {
-            componentArray.append(CastingComponent.Verbal)
-        }
-        if componentMaterial.value {
-            componentArray.append(CastingComponent.Material)
-        }
-        if componentFocus.value {
-            componentArray.append(CastingComponent.Focus)
-        }
-        if componentDivineFocus.value {
-            componentArray.append(CastingComponent.DivineFocus)
-        }
-        if componentCost.value > 0 {
-            componentArray.append(CastingComponent.Costly)
-        }
-        if componentSomatic.value {
-            componentArray.append(CastingComponent.Somatic)
-        }
-        return componentArray
-    }
-
-    lazy var viewCastingClasses: [CastingClassSpellLevel] = decodeCastingClasses(json: castingClasses.value)
-
-    var viewSchoolsWithDescriptors: String {
-        var schoolWithDesc = school.value.capitalizingFirstLetter()
-        if subschool.value.count > 0
-            || descriptor.value.count > 0 {
-            var comma = false
-            if subschool.value.count > 0,
-                descriptor.value.count > 0 {
-                comma = true
-            }
-            schoolWithDesc += " ["
-            schoolWithDesc += subschool.value
-            schoolWithDesc += comma ? ", " : ""
-            schoolWithDesc += descriptor.value
-            schoolWithDesc += "]"
-            return schoolWithDesc
-        }
-        return schoolWithDesc
-    }
-
-    var viewDescription: NSAttributedString {
-        let fontAttributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
-
-        let schoolText = NSMutableAttributedString(string: "School: ", attributes: fontAttributes)
-        let levelText = NSMutableAttributedString(string: "Level: ", attributes: fontAttributes)
-        let componentsText = NSMutableAttributedString(string: "Components: ", attributes: fontAttributes)
-        let rangeText = NSMutableAttributedString(string: "Range: ", attributes: fontAttributes)
-        let areaText = NSMutableAttributedString(string: "Area: ", attributes: fontAttributes)
-        let effectText = NSMutableAttributedString(string: "Effect: ", attributes: fontAttributes)
-        let targetText = NSMutableAttributedString(string: "Target: ", attributes: fontAttributes)
-        let durationText = NSMutableAttributedString(string: "Duration: ", attributes: fontAttributes)
-        let saveText = NSMutableAttributedString(string: "Saving Throw: ", attributes: fontAttributes)
-        let srText = NSMutableAttributedString(string: "Spell Resistance: ", attributes: fontAttributes)
-        let mythicText = NSMutableAttributedString(string: "Mythic: ", attributes: fontAttributes)
-
-        let spacing = NSMutableAttributedString(string: "\n")
-        let viewDescription = NSMutableAttributedString()
-
-        if school.value.count > 0 {
-            viewDescription.append(schoolText)
-            viewDescription.append(
-                NSMutableAttributedString(
-                    string: viewSchoolsWithDescriptors
-                )
-            )
-            viewDescription.append(spacing)
-        }
-        if castingClasses.value.count > 0 {
-            viewDescription.append(levelText)
-            viewDescription.append(
-                NSMutableAttributedString(
-                    string: viewCastingClasses.filter { $0.spellLevel >= 0 }
-                        .map { "\($0.castingClass.rawValue) \($0.spellLevel)" }
-                        .joined(separator: ", ")
-                )
-            )
-            viewDescription.append(spacing)
-        }
-        if components.value.count > 0 {
-            viewDescription.append(componentsText)
-            viewDescription.append(NSMutableAttributedString(string: components.value))
-            viewDescription.append(spacing)
-        }
-        if range.value.count > 0 {
-            viewDescription.append(rangeText)
-            viewDescription.append(NSMutableAttributedString(string: range.value))
-            viewDescription.append(spacing)
-        }
-        if area.value.count > 0 {
-            viewDescription.append(areaText)
-            viewDescription.append(NSMutableAttributedString(string: area.value))
-            viewDescription.append(spacing)
-        }
-        if effect.value.count > 0 {
-            viewDescription.append(effectText)
-            viewDescription.append(NSMutableAttributedString(string: effect.value))
-            viewDescription.append(spacing)
-        }
-        if target.value.count > 0 {
-            viewDescription.append(targetText)
-            viewDescription.append(NSMutableAttributedString(string: target.value))
-            viewDescription.append(spacing)
-        }
-        if duration.value.count > 0 {
-            viewDescription.append(durationText)
-            viewDescription.append(NSMutableAttributedString(string: duration.value))
-            viewDescription.append(spacing)
-        }
-        if save.value.count > 0 {
-            viewDescription.append(saveText)
-            viewDescription.append(NSMutableAttributedString(string: save.value))
-            viewDescription.append(spacing)
-        }
-        if sr.value.count > 0 {
-            viewDescription.append(srText)
-            viewDescription.append(NSMutableAttributedString(string: sr.value))
-            viewDescription.append(spacing)
-        }
-
-        viewDescription.append(spacing)
-        viewDescription.append(NSMutableAttributedString(string: shortDescription.value))
-
-        if mythic.value {
-            viewDescription.append(spacing)
-            viewDescription.append(mythicText)
-            viewDescription.append(NSMutableAttributedString(string: mythicDescription.value))
-            viewDescription.append(spacing)
-        }
-
-        return viewDescription
-    }
 
     func populate(withModel spell: SpellDataModelJSON) {
         name.value = spell.name
@@ -260,10 +109,10 @@ class SpellDataInternalModel: CoreStoreObject {
 
     }
 
-    func decodeCastingClasses(json: String) -> [CastingClassSpellLevel] {
+    func decodeCastingClasses() -> [CastingClassSpellLevel] {
         do {
             let decoder = JSONDecoder()
-            return try decoder.decode([CastingClassSpellLevel].self, from: json.data(using: .utf8)!)
+            return try decoder.decode([CastingClassSpellLevel].self, from: castingClasses.value.data(using: .utf8)!)
         } catch {
             print("Encountered error decoding spell level data: \(error.localizedDescription)")
         }
@@ -325,4 +174,3 @@ struct CastingClassSpellLevel: Codable {
     let castingClass: CastingClass
     let spellLevel: Int
 }
-
