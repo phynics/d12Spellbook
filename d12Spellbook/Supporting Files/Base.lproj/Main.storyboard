@@ -311,6 +311,7 @@
                     <connections>
                         <segue destination="dcm-7Z-uNz" kind="relationship" relationship="viewControllers" id="Rzw-u7-gtA"/>
                         <segue destination="QUu-b2-2OK" kind="relationship" relationship="viewControllers" id="YXh-lG-KVu"/>
+                        <segue destination="pk1-zj-2QJ" kind="relationship" relationship="viewControllers" id="Mmt-co-iQD"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vz6-kS-GaO" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -524,6 +525,22 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v5U-8K-PAi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1969" y="170"/>
+        </scene>
+        <!--About-->
+        <scene sceneID="JYR-wI-Ri9">
+            <objects>
+                <viewController id="pk1-zj-2QJ" userLabel="About" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="RSw-LS-57A">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="x9g-Tz-7vj"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="About" id="h1G-mP-R0d"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9Y3-Xg-3VF" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1969" y="1696"/>
         </scene>
         <!--Spells-->
         <scene sceneID="NmD-8R-3sI">

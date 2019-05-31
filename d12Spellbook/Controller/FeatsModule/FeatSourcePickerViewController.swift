@@ -21,49 +21,13 @@ class FeatSourcePickerViewController: UIViewController {
         }
     }
 
-    var sourceList: [FeatListViewController.FeatToggle]?
-    var typeList: [FeatListViewController.FeatToggle]?
-
-    var pickAllSources: Bool {
-        get {
-            if let sourceList = self.sourceList,
-                sourceList.allSatisfy({ $0.picked }) {
-                return true
-            } else {
-                return false
-            }
-        }
-        set {
-            for index in 0..<(sourceList?.count ?? 0) {
-                toggleSourceState(index, to: newValue)
-            }
-        }
-    }
-
-    var pickAllTypes: Bool {
-        get {
-            if let typeList = self.typeList,
-                typeList.allSatisfy({ $0.picked }) {
-                return true
-            } else {
-                return false
-            }
-        }
-        set {
-            for index in 0..<(typeList?.count ?? 0) {
-                toggleTypeState(index, to: newValue)
-            }
-        }
-    }
-
-    override func viewDidLoad() {
-        sourceList = sourceDelegate?.retrieveSourceState()
-        typeList = sourceDelegate?.retrieveTypeState()
-
-        tableView.delegate = self
-        tableView.dataSource = self
-    }
-
+    var sourceList: [String] = []
+    var typeList: [String] = []
+    
+    
+    var sourceListPicked: [String] = []
+    var typeListPicked: [String] = []
+    
     @IBAction func pickerChanged(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 0 {
             shownFilter = .source
@@ -71,33 +35,37 @@ class FeatSourcePickerViewController: UIViewController {
             shownFilter = .type
         }
     }
-
+    
     @IBAction func dismissView(_ sender: Any) {
-        if let sourceList = self.sourceList,
-            let typeList = self.typeList {
-            sourceDelegate?.lastState(types: typeList, sources: sourceList)
-        }
-        
         self.dismiss(animated: true)
     }
 
-    func toggleSourceState(_ index: Int, to: Bool?) {
-        if let item = sourceList?[index] {
-            if let toBool = to {
-                sourceList![index] = (name: item.name, picked: toBool)
-            } else {
-                sourceList![index] = (name: item.name, picked: !item.picked)
-            }
+    override func viewDidLoad() {
+        sourceList = sourceDelegate?.availableSources() ?? []
+        typeList = sourceDelegate?.availableTypes() ?? []
+        
+        sourceListPicked = sourceDelegate?.pickedSources() ?? []
+        typeListPicked = sourceDelegate?.pickedTypes() ?? []
+
+        tableView.delegate = self
+        tableView.dataSource = self
+    }
+    
+    func toggleTypeState(At index: Int) {
+        let type = self.typeList[index]
+        if let foundIndex = self.typeListPicked.firstIndex(of: type) {
+            self.typeListPicked.remove(at: foundIndex)
+        } else {
+            self.typeListPicked.append(type)
         }
     }
-
-    func toggleTypeState(_ index: Int, to: Bool?) {
-        if let item = typeList?[index] {
-            if let toBool = to {
-                typeList![index] = (name: item.name, picked: toBool)
-            } else {
-                typeList![index] = (name: item.name, picked: !item.picked)
-            }
+    
+    func toggleSourceState(At index: Int) {
+        let source = self.sourceList[index]
+        if let foundIndex = self.sourceListPicked.firstIndex(of: source) {
+            self.sourceListPicked.remove(at: foundIndex)
+        } else {
+            self.sourceListPicked.append(source)
         }
     }
 }
@@ -105,7 +73,7 @@ class FeatSourcePickerViewController: UIViewController {
 extension FeatSourcePickerViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        var tableList: [FeatListViewController.FeatToggle]? = []
+        var tableList: [String] = []
 
         switch shownFilter {
         case .source:
@@ -114,39 +82,39 @@ extension FeatSourcePickerViewController: UITableViewDataSource {
             tableList = self.typeList
         }
 
-        if let count = tableList?.count {
-            return count + 1
-        } else {
-            return 0
-        }
+        return tableList.count + 1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = self.tableView.dequeueReusableCell(withIdentifier: "sourcePickerCell") as! FeatSourceListTableViewCell
 
-        var tableList: [FeatListViewController.FeatToggle]? = []
+        var tableList: [String] = []
+        var tablePickedList: [String] = []
 
         switch shownFilter {
         case .source:
             tableList = self.sourceList
+            tablePickedList = self.sourceListPicked
         case .type:
             tableList = self.typeList
+            tablePickedList = self.typeListPicked
         }
 
         if indexPath.row > 0 {
-            let cellData = tableList?[indexPath.row - 1]
-            cell.name = cellData?.name
-            cell.enabled = cellData?.picked
+            let cellName = tableList[indexPath.row - 1]
+            cell.name = cellName
+            cell.enabled = tablePickedList.contains(cellName)
         } else {
             if shownFilter == .source {
                 cell.name = "All Sources"
-                cell.enabled = pickAllSources
+                cell.enabled = tablePickedList.count == tableList.count
+                    && tablePickedList.count > 0
             } else {
                 cell.name = "All Types"
-                cell.enabled = pickAllTypes
+                cell.enabled = tablePickedList.count == tableList.count
+                    && tablePickedList.count > 0
             }
         }
-
         return cell
     }
 
@@ -157,27 +125,46 @@ extension FeatSourcePickerViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row > 0 {
             if shownFilter == .source {
-                toggleSourceState(indexPath.row - 1, to: nil)
+                toggleSourceState(At: indexPath.row - 1)
             } else {
-                toggleTypeState(indexPath.row - 1, to: nil)
+                toggleTypeState(At: indexPath.row - 1)
             }
             tableView.reloadData()
-        } else {
+        } else if indexPath.row == 0 {
             if shownFilter == .source {
-                pickAllSources.toggle()
+                if self.sourceListPicked.count == self.sourceList.count {
+                    self.sourceListPicked = []
+                } else {
+                    self.sourceListPicked = self.sourceList
+                }
             } else {
-                pickAllTypes.toggle()
+                if self.typeListPicked.count == self.typeList.count {
+                    self.typeListPicked = []
+                } else {
+                    self.typeListPicked = self.typeList
+                }
+            }
+            
+            switch shownFilter {
+            case .source:
+                sourceDelegate?.onSourcePicked(self.sourceListPicked)
+            case .type:
+                sourceDelegate?.onTypePicked(self.typeListPicked)
             }
             tableView.reloadData()
         }
     }
 }
 
-
 protocol FeatSourcePickerDelegate {
-    func retrieveSourceState() -> [FeatListViewController.FeatToggle]
-    func retrieveTypeState() -> [FeatListViewController.FeatToggle]
-    func lastState(types: [FeatListViewController.FeatToggle], sources: [FeatListViewController.FeatToggle])
+    func onSourcePicked(_: [String])
+    func onTypePicked(_: [String])
+    
+    func pickedSources() -> [String]
+    func pickedTypes() -> [String]
+    
+    func availableSources() -> [String]
+    func availableTypes() -> [String]
 }
 
 enum FilterType {

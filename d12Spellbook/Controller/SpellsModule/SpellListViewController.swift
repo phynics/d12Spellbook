@@ -18,10 +18,15 @@ class SpellListViewController: UIViewController {
     let backgroundScheduler = ConcurrentDispatchQueueScheduler(qos: .userInitiated)
     
     var spells = BehaviorSubject<[SpellDataViewModel]>(value: [])
+    
+    // store picked options for filtering
     var spellClassesFilter = BehaviorSubject<[String]>(value: [])
     var spellSchoolsFilter = BehaviorSubject<[String]>(value: [])
     var spellComponentsFilter = BehaviorSubject<[String]>(value: [])
+    
+    // stores method of filtering for components (.Include, .Exclude, .Match)
     var spellComponentsFilterMethod = BehaviorSubject<FilterMethod>(value: .Include)
+    
     var disposeBag = DisposeBag()
 
 
@@ -30,7 +35,7 @@ class SpellListViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        DataController.fetchSpellsUpdating()
+        DataController.spells
                 .subscribe(self.spells.asObserver())
                 .disposed(by: disposeBag)
         
@@ -59,11 +64,12 @@ class SpellListViewController: UIViewController {
             return ""
         }
 
-        let searchResult = self.searchBar.rx.text // retrieve searchbar results
+        let searchResult = self.searchBar.rx.text
             .orEmpty
             .distinctUntilChanged()
             .debounce(0.5, scheduler: backgroundScheduler)
 
+        // outputs data as the data from sources and filter options come.
         Observable.combineLatest(searchResult.observeOn(backgroundScheduler),
                                  spells.observeOn(backgroundScheduler),
                                  spellClassesFilter.observeOn(backgroundScheduler),

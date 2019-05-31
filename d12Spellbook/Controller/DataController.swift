@@ -16,6 +16,11 @@ class DataController {
     static let defaultsFeatKey = "LoadedFeatData"
     static let defaultsSpellKey = "LoadedSpellsData"
 
+    static let backgroundQueue = ConcurrentDispatchQueueScheduler(qos: .userInitiated)
+
+    static let spells = BehaviorSubject<[SpellDataViewModel]>(value: [])
+    static let feats = BehaviorSubject<[FeatDataViewModel]>(value: [])
+
     static func setup() throws {
         CoreStore.defaultStack = DataStack(
             CoreStoreSchema(
@@ -27,12 +32,20 @@ class DataController {
             )
         )
 
-        try! CoreStore.addStorageAndWait(
-            SQLiteStore(
-                fileName: "d12Spellbook.sqlite",
-                localStorageOptions: .recreateStoreOnModelMismatch
-            )
-        )
+        try CoreStore.addStorageAndWait(SQLiteStore(
+            fileName: "d12Spellbook.sqlite",
+            localStorageOptions: .recreateStoreOnModelMismatch
+        ))
+        
+
+        _fetchSpellsUpdating()
+            .share()
+            .subscribe(spells.asObserver())
+        _fetchFeatsUpdating()
+            .share()
+            .subscribe(feats.asObserver())
+
+
     }
 
     static func loadFeatDataFrom(json: Data, force: Bool = false) -> Observable<Void> {
@@ -40,23 +53,24 @@ class DataController {
             let loadedFeats = try FeatDataModelJSON.createFrom(JsonData: json)
             if !force {
                 if self.defaults.bool(forKey: self.defaultsFeatKey) {
+                    print("Skipped JSON import.")
                     return
                 }
             }
+            
             for feat in loadedFeats {
-                let newFeatObject = transaction.create(Into<FeatDataInternalModel>())
-                newFeatObject.populate(withModel: feat)
+                let newFeat = transaction.create(Into<FeatDataInternalModel>())
+                newFeat.populate(withModel: feat)
             }
         })
             .do(
                 onError: { error in
-                    print("Error occured while parsing feats: \(error)")
                     self.defaults.set(false, forKey: self.defaultsFeatKey)
-                },
+            },
                 onCompleted: {
                     self.defaults.set(true, forKey: self.defaultsFeatKey)
-                }
-            )
+            }
+        )
     }
 
     static func loadSpellDataFrom(json: Data, force: Bool = false) -> Observable<Void> {
@@ -64,9 +78,11 @@ class DataController {
             let loadedSpells = try SpellDataModelJSON.createFrom(JsonData: json)
             if !force {
                 if self.defaults.bool(forKey: self.defaultsSpellKey) {
+                    print("Skipped JSON import.")
                     return
                 }
             }
+            
             for spell in loadedSpells {
                 let newSpell = transaction.create(Into<SpellDataInternalModel>())
                 newSpell.populate(withModel: spell)
@@ -82,15 +98,8 @@ class DataController {
             )
     }
 
-    static func fetchFeatBy(id: Int) -> FeatDataInternalModel? {
-        return try! CoreStore.fetchOne(
-            From<FeatDataInternalModel>(),
-            Where<FeatDataInternalModel>("id == %d", id)
-        )
-    }
-
     static func feats(FromSources sourcesList: [String]?, WithTypes typesList: [String]?) -> Observable<[FeatDataViewModel]> {
-        return fetchFeatsUpdating()
+        return feats
             .map { featsList -> [FeatDataViewModel] in
                 var filteredList = featsList
                 if let sourcesList = sourcesList {
@@ -113,37 +122,6 @@ class DataController {
         }
     }
 
-    static func featSources() -> Observable<[String]> {
-        return fetchFeatsUpdating()
-            .map { featList in
-                featList.map { $0.sourceName }
-                    .unique()
-        }
-    }
-
-    static func featTypes() -> Observable<[String]> {
-        return fetchFeatsUpdating()
-            .map { featList in
-                let listOfTypes = featList
-                    .map { feat -> [String] in
-                        let result = feat.types
-                            .split(separator: ",")
-                            .map({ (substr) -> String in
-                                if substr.hasPrefix(" ") {
-                                    return String(substr.dropFirst()).capitalizingFirstLetter()
-                                } else {
-                                    return String(substr).capitalizingFirstLetter()
-                                }
-                            })
-                        return result
-                    }
-                    .reduce(into: [String](), { (result, next) in
-                        result.append(contentsOf: next)
-                    })
-                return listOfTypes.unique()
-        }
-    }
-
     private static func _fetchFeats() -> Observable<[FeatDataViewModel]> {
         return CoreStore.rx.perform(asynchronous: { (transaction) -> [FeatDataViewModel] in
             return try! transaction.fetchAll(
@@ -154,23 +132,23 @@ class DataController {
                     FeatDataViewModel.createFrom(Internal: $0)
             }
         })
-            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+            .subscribeOn(backgroundQueue)
     }
-    
+
     private static func _fetchSpells() -> Observable<[SpellDataViewModel]> {
         return CoreStore.rx.perform(asynchronous: { (transaction) -> [SpellDataViewModel] in
             return try! transaction.fetchAll(
                 From<SpellDataInternalModel>(),
                 OrderBy<SpellDataInternalModel>(.ascending("name"))
-                )
+            )
                 .map {
                     SpellDataViewModel.createFrom(Internal: $0)
             }
         })
-            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+            .subscribeOn(backgroundQueue)
     }
 
-    static func fetchFeatsUpdating() -> Observable<[FeatDataViewModel]> {
+    private static func _fetchFeatsUpdating() -> Observable<[FeatDataViewModel]> {
         return Observable<[FeatDataViewModel]>.concat(
             _fetchFeats(),
             CoreStore.rx.monitorList(
@@ -182,7 +160,7 @@ class DataController {
         )
     }
 
-    static func fetchSpellsUpdating() -> Observable<[SpellDataViewModel]> {
+    private static func _fetchSpellsUpdating() -> Observable<[SpellDataViewModel]> {
         return Observable<[SpellDataViewModel]>.concat(
             _fetchSpells(),
             CoreStore.rx.monitorList(

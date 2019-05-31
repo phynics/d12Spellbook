@@ -16,14 +16,15 @@ class FeatListViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
 
+    let backgroundScheduler = ConcurrentDispatchQueueScheduler(qos: .userInitiated)
     let disposeBag = DisposeBag()
 
-    typealias FeatToggle = (name: String, picked: Bool)
-
-    var featSources = BehaviorSubject(value: [FeatToggle]())
-    var featTypes = BehaviorSubject(value: [FeatToggle]())
-
-    let refreshData = ReplaySubject<Void>.create(bufferSize: 1)
+    var featSources = BehaviorSubject<[String]>(value: [])
+    var featTypes = BehaviorSubject<[String]>(value: [])
+    
+    // store picked options for filtering
+    var featSourcesFilter = BehaviorSubject<[String]>(value: [])
+    var featTypeFilter = BehaviorSubject<[String]>(value: [])
 
     @IBAction func filterButtonPressed(_ sender: Any) {
         self.performSegue(withIdentifier: "filterPopUp", sender: self)
@@ -34,50 +35,58 @@ class FeatListViewController: UIViewController {
 
         hideKeyboardOnTouch()
 
-        let tableDataSource = RxTableViewSectionedReloadDataSource<SectionOfFeatDataViewModel>(configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
-            let cell = tableView.dequeueReusableCell(withIdentifier: "featCell")
-            if let cell = cell as? FeatListTableViewCell {
-                cell.sourceFeat = item
-            }
-            return cell!
-        })
+
+        let tableDataSource = RxTableViewSectionedReloadDataSource<SectionOfFeatDataViewModel>(
+            configureCell: { (dataSource, tableView, indexPath, item) -> UITableViewCell in
+                let cell = tableView.dequeueReusableCell(withIdentifier: "featCell")
+                if let cell = cell as? FeatListTableViewCell {
+                    cell.sourceFeat = item
+                }
+                return cell!
+            })
 
         tableDataSource.sectionIndexTitles = { arg in
             arg.sectionModels.map { $0.header }
         }
 
-        refreshData.onNext(())
-        refreshData.flatMap { _ in
-            self.searchBar.rx.text
-                .orEmpty
-                .distinctUntilChanged()
-                .debounce(0.5, scheduler: MainScheduler.instance)
-        }
-            .flatMap { [weak self] (searchText) -> Observable<[FeatDataViewModel]> in
-                let sourceFilter = try? self?.featSources.value()
-                    .filter {
-                        $0.picked
-                    }
-                    .map {
-                        $0.name
-                }
-                let typeFilter = try? self?.featTypes.value()
-                    .filter {
-                        $0.picked
-                    }
-                    .map {
-                        $0.name
-                }
-                return DataController.feats(FromSources: sourceFilter, WithTypes: typeFilter)
-                    .map {
-                        return $0.filter {
-                            if searchText.count > 0 {
-                                return $0.name.contains(searchText)
-                            } else {
-                                return true
+        let searchBarFilter = self.searchBar.rx.text
+            .orEmpty
+            .distinctUntilChanged()
+            .debounce(0.5, scheduler: backgroundScheduler)
+
+
+        let sourceFilter = featSourcesFilter.observeOn(backgroundScheduler)
+        let typeFilter = featTypeFilter.observeOn(backgroundScheduler)
+        let feats = DataController.feats.observeOn(backgroundScheduler)
+
+        // Prepare output as the results from feats and various filtering options come.
+        Observable.combineLatest(feats, searchBarFilter, sourceFilter, typeFilter)
+            .map { (featsResult, searchBarResult, sourceResult, typeResult) -> [FeatDataViewModel] in
+                let filteredResult = featsResult
+                    .filter { feat in
+                        if typeResult.count > 0 {
+                            return typeResult.contains { type -> Bool in
+                                feat.types.contains(type)
                             }
+                        } else {
+                            return true
                         }
-                }
+                    }
+                    .filter { feat -> Bool in
+                        if sourceResult.count > 0 {
+                            return sourceResult.contains(feat.sourceName)
+                        } else {
+                            return true
+                        }
+                    }
+                    .filter { feat -> Bool in
+                        if searchBarResult.count > 0 {
+                            return feat.name.contains(searchBarResult)
+                        } else {
+                            return true
+                        }
+                    }
+                return filteredResult
             }
             .map { featModels in
                 return Dictionary.init(grouping: featModels, by: { $0.name.first! })
@@ -93,7 +102,12 @@ class FeatListViewController: UIViewController {
             .bind(to: tableView.rx.items(dataSource: tableDataSource))
             .disposed(by: disposeBag)
 
-        DataController.featSources()
+        // Setup local feat sources
+        DataController.feats
+            .map { featList in
+                featList.map { $0.sourceName }
+                    .unique()
+            }
             .map {
                 $0.sorted(by:) { a, b -> Bool in
                     if a.contains("PFRPG"), !b.contains("PFRPG") {
@@ -109,15 +123,11 @@ class FeatListViewController: UIViewController {
                     }
                 }
             }
-            .map {
-                $0.map {
-                    (name: $0, picked: true)
-                }
-            }
             .subscribe(self.featSources)
             .disposed(by: disposeBag)
 
-        DataController.fetchFeatsUpdating().map {
+        // Setup local feat types
+        DataController.feats.map {
             $0.map { feat -> [String] in
                 let additionalTypes = feat.types
                     .split(separator: ",")
@@ -139,14 +149,10 @@ class FeatListViewController: UIViewController {
                 })
                     .unique()
             }
-            .map {
-                $0.map {
-                    (name: $0, picked: true)
-                }
-            }
             .subscribe(self.featTypes.asObserver())
             .disposed(by: disposeBag)
-
+        
+        // Engage segue when an item is selected from the table
         self.tableView.rx.itemSelected.subscribe { [weak self] event in
             self?.performSegue(withIdentifier: "showFeatDetail", sender: nil)
         }
@@ -170,27 +176,30 @@ class FeatListViewController: UIViewController {
 }
 
 extension FeatListViewController: FeatSourcePickerDelegate {
-    func lastState(types: [FeatListViewController.FeatToggle], sources: [FeatListViewController.FeatToggle]) {
-        self.featSources.onNext(sources)
-        self.featTypes.onNext(types)
-        self.refreshData.onNext(())
+    func onSourcePicked(_ elem: [String]) {
+        self.featSourcesFilter.onNext(elem)
     }
 
-    func retrieveSourceState() -> [FeatListViewController.FeatToggle] {
-        if let vl = try? self.featSources.value() {
-            return vl
-        } else {
-            return []
-        }
+    func onTypePicked(_ elem: [String]) {
+        self.featTypeFilter.onNext(elem)
     }
 
-    func retrieveTypeState() -> [FeatListViewController.FeatToggle] {
-        if let vl = try? self.featTypes.value() {
-            return vl
-        } else {
-            return []
-        }
+    func pickedSources() -> [String] {
+        return (try? self.featSourcesFilter.value()) ?? []
     }
+
+    func pickedTypes() -> [String] {
+        return (try? self.featTypeFilter.value()) ?? []
+    }
+
+    func availableSources() -> [String] {
+        return (try? featSources.value()) ?? []
+    }
+
+    func availableTypes() -> [String] {
+        return (try? featTypes.value()) ?? []
+    }
+
 }
 
 struct SectionOfFeatDataViewModel {

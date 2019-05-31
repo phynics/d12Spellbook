@@ -20,16 +20,18 @@ class EntryViewController: UITabBarController {
     let spellDataSourceName = "SpellsData22Nov2018"
 
     override func viewDidLoad() {
-        guard (try? DataController.setup()) != nil else {
-            return
+        do {
+            try DataController.setup()
+        } catch {
+            print("Failed starting CoreData.")
         }
-
+        var loading = Array<Observable<Void>>()
         if let path = Bundle.main.url(forResource: jsonDataSourceName, withExtension: "json") {
             do {
                 let data = try Data(contentsOf: path)
-                DataController.loadFeatDataFrom(json: data)
-                    .subscribe()
-                    .disposed(by: disposeBag)
+                loading.append(
+                    DataController.loadFeatDataFrom(json: data, force: false)
+                        )
             } catch {
                 print("Error loading feats: \(error)")
             }
@@ -38,12 +40,16 @@ class EntryViewController: UITabBarController {
         if let path = Bundle.main.url(forResource: spellDataSourceName, withExtension: "json") {
             do {
                 let data = try Data(contentsOf: path)
-                DataController.loadSpellDataFrom(json: data)
-                    .subscribe()
-                    .disposed(by: disposeBag)
+                loading.append(
+                    DataController.loadSpellDataFrom(json: data, force: false)
+                )
             } catch {
                 print("Error loading spells: \(error)")
             }
         }
+        Observable.concat(loading)
+            .subscribe()
+            .disposed(by: disposeBag)
+    
     }
 }

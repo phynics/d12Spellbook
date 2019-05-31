@@ -24,21 +24,21 @@ extension FeatDataViewModel {
         
         let fontAttributesBold: [NSAttributedString.Key: Any] = [.font: UIFont(name: "HelveticaNeue-Bold", size: 16)!]
         
-        var name = model.featName.value
+        let name = model.featName.value
         
         var type = "\(model.featType.value.capitalizingFirstLetter())"
         if model.featAdditionalTypes.value.count != 0 {
             type += ", \(model.featAdditionalTypes.value)"
         }
         
-        var nameWithTypes = "\(name) (\(type))"
+        let nameWithTypes = "\(name) (\(type))"
         
-        var prerequisites = NSMutableAttributedString(string: "Prerequisites: ", attributes: fontAttributesBold)
+        let prerequisites = NSMutableAttributedString(string: "Prerequisites: ", attributes: fontAttributesBold)
         prerequisites.append(NSMutableAttributedString(string: model.featPrerequisites.value))
         
-        var shortDescription = model.featShortDescription.value
+        let shortDescription = model.featShortDescription.value
         
-        var sourceName = model.featSource.value
+        let sourceName = model.featSource.value
         
         let description = NSMutableAttributedString(string: "")
         
