@@ -13,6 +13,10 @@
 		7D075B83222C3FE60078D4BF /* FeatDataModelJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B82222C3FE60078D4BF /* FeatDataModelJSON.swift */; };
 		7D075B85222C40370078D4BF /* FeatDataInternalModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D075B84222C40370078D4BF /* FeatDataInternalModel.swift */; };
 		7D1813F42239D9A100D70356 /* String+CapitilizingFirstLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1813F32239D9A100D70356 /* String+CapitilizingFirstLetter.swift */; };
+		7D1D93AB22A5F27600562A06 /* SpellListFilterEmbedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1D93AA22A5F27600562A06 /* SpellListFilterEmbedViewController.swift */; };
+		7D1D93B122ADBF9700562A06 /* AboutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1D93B022ADBF9700562A06 /* AboutViewModel.swift */; };
+		7D1D93B822ADC79D00562A06 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1D93B722ADC79D00562A06 /* AboutViewController.swift */; };
+		7D1D93BA22ADC7CF00562A06 /* AboutTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1D93B922ADC7CF00562A06 /* AboutTableViewCell.swift */; };
 		7D2ECCE4224E40F800C71535 /* SpellListDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D2ECCE3224E40F800C71535 /* SpellListDetailView.swift */; };
 		7D3CD150229D9817008E1C95 /* FeatDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3CD14F229D9817008E1C95 /* FeatDataViewModel.swift */; };
 		7D3CD152229D9826008E1C95 /* SpellDataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D3CD151229D9826008E1C95 /* SpellDataViewModel.swift */; };
@@ -44,6 +48,10 @@
 		7D075B82222C3FE60078D4BF /* FeatDataModelJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataModelJSON.swift; sourceTree = "<group>"; };
 		7D075B84222C40370078D4BF /* FeatDataInternalModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataInternalModel.swift; sourceTree = "<group>"; };
 		7D1813F32239D9A100D70356 /* String+CapitilizingFirstLetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+CapitilizingFirstLetter.swift"; sourceTree = "<group>"; };
+		7D1D93AA22A5F27600562A06 /* SpellListFilterEmbedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellListFilterEmbedViewController.swift; sourceTree = "<group>"; };
+		7D1D93B022ADBF9700562A06 /* AboutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewModel.swift; sourceTree = "<group>"; };
+		7D1D93B722ADC79D00562A06 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
+		7D1D93B922ADC7CF00562A06 /* AboutTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutTableViewCell.swift; sourceTree = "<group>"; };
 		7D2ECCE3224E40F800C71535 /* SpellListDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellListDetailView.swift; sourceTree = "<group>"; };
 		7D3CD14F229D9817008E1C95 /* FeatDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatDataViewModel.swift; sourceTree = "<group>"; };
 		7D3CD151229D9826008E1C95 /* SpellDataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpellDataViewModel.swift; sourceTree = "<group>"; };
@@ -84,6 +92,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7D1D93B622ADC79D00562A06 /* AboutModule */ = {
+			isa = PBXGroup;
+			children = (
+				7D1D93B722ADC79D00562A06 /* AboutViewController.swift */,
+				7D1D93B922ADC7CF00562A06 /* AboutTableViewCell.swift */,
+			);
+			path = AboutModule;
+			sourceTree = "<group>";
+		};
 		7D5C5D3F225BF04400F77130 /* FeatsModule */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,6 +118,7 @@
 			children = (
 				7DE7900222499AC2003BC44A /* SpellListViewController.swift */,
 				7DC880E02263C571000CFB10 /* SpellListFilterView.swift */,
+				7D1D93AA22A5F27600562A06 /* SpellListFilterEmbedViewController.swift */,
 				7DE790042249A3EA003BC44A /* SpellListTableViewCell.swift */,
 				7D2ECCE3224E40F800C71535 /* SpellListDetailView.swift */,
 			);
@@ -112,6 +130,7 @@
 			children = (
 				7D3CD14F229D9817008E1C95 /* FeatDataViewModel.swift */,
 				7D3CD151229D9826008E1C95 /* SpellDataViewModel.swift */,
+				7D1D93B022ADBF9700562A06 /* AboutViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -150,6 +169,7 @@
 		7D8C0B96222F331E000CA55E /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				7D1D93B622ADC79D00562A06 /* AboutModule */,
 				7D5C5D3F225BF04400F77130 /* FeatsModule */,
 				7D5C5D40225BF05700F77130 /* SpellsModule */,
 				7DE790002249983B003BC44A /* EntryViewController.swift */,
@@ -317,13 +337,11 @@
 				"${BUILT_PRODUCTS_DIR}/CoreStore/CoreStore.framework",
 				"${BUILT_PRODUCTS_DIR}/Differentiator/Differentiator.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
-				"${BUILT_PRODUCTS_DIR}/PureLayout/PureLayout.framework",
 				"${BUILT_PRODUCTS_DIR}/RxAtomic/RxAtomic.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCoreStore/RxCoreStore.framework",
 				"${BUILT_PRODUCTS_DIR}/RxDataSources/RxDataSources.framework",
 				"${BUILT_PRODUCTS_DIR}/RxEureka/RxEureka.framework",
-				"${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/XLPagerTabStrip/XLPagerTabStrip.framework",
 			);
@@ -332,13 +350,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CoreStore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differentiator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PureLayout.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAtomic.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCoreStore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxDataSources.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxEureka.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxOptional.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XLPagerTabStrip.framework",
 			);
@@ -363,16 +379,20 @@
 				7D075B7D222A06350078D4BF /* Int+asBool.swift in Sources */,
 				7DCCD4AE22249A1400722982 /* FeatListViewController.swift in Sources */,
 				7D075B85222C40370078D4BF /* FeatDataInternalModel.swift in Sources */,
+				7D1D93BA22ADC7CF00562A06 /* AboutTableViewCell.swift in Sources */,
 				7DCCD4C22224A61E00722982 /* FeatListTableViewCell.swift in Sources */,
 				7D5E31452236FBFE00EDB101 /* FeatSourceListTableViewCell.swift in Sources */,
+				7D1D93B122ADBF9700562A06 /* AboutViewModel.swift in Sources */,
 				7DC31B052225E8C9009D8D72 /* FeatListDetailViewController.swift in Sources */,
 				7D1813F42239D9A100D70356 /* String+CapitilizingFirstLetter.swift in Sources */,
 				7DA3CB4B2230BCBF002A5B0D /* UIViewController+hideKeyboardOnTouch.swift in Sources */,
 				7DCCABDF22385F20007C7E1F /* Sequence+Unique.swift in Sources */,
 				7DCCD4AC22249A1400722982 /* AppDelegate.swift in Sources */,
 				7D77A318223F137B00F8FAFD /* DataController.swift in Sources */,
+				7D1D93B822ADC79D00562A06 /* AboutViewController.swift in Sources */,
 				7D5E31492236FCA300EDB101 /* FeatSourcePickerViewController.swift in Sources */,
 				7D075B83222C3FE60078D4BF /* FeatDataModelJSON.swift in Sources */,
+				7D1D93AB22A5F27600562A06 /* SpellListFilterEmbedViewController.swift in Sources */,
 				7D2ECCE4224E40F800C71535 /* SpellListDetailView.swift in Sources */,
 				7DE78FFF22498B02003BC44A /* SpellDataInternalModel.swift in Sources */,
 				7D3CD152229D9826008E1C95 /* SpellDataViewModel.swift in Sources */,
@@ -525,7 +545,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F8S46T9XAN;
 				INFOPLIST_FILE = d12Spellbook/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.atkn.d12Spellbook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -541,7 +564,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = F8S46T9XAN;
 				INFOPLIST_FILE = d12Spellbook/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = me.atkn.d12Spellbook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

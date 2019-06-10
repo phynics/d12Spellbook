@@ -35,6 +35,7 @@ class SpellListViewController: UIViewController {
     }
 
     override func viewDidLoad() {
+        
         DataController.spells
                 .subscribe(self.spells.asObserver())
                 .disposed(by: disposeBag)

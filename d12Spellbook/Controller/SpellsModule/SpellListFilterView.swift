@@ -10,13 +10,17 @@ import Foundation
 import Eureka
 import RxEureka
 import RxSwift
-import RxOptional
+import XLPagerTabStrip
 
-class SpellListFilterView: FormViewController {
+class SpellListFilterView: SegmentedPagerTabStripViewController {
 
     let disposeBag = DisposeBag()
 
     var dataSource: SpellListFilterViewDataSource!
+    
+    var classesFilterViewController = SpellFilterEmbedViewController(style: .plain)
+    var schoolFilterViewController = SpellFilterEmbedViewController(style: .plain)
+    var componentsFilterViewController = SpellFilterEmbedViewController(style: .plain)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,26 +29,37 @@ class SpellListFilterView: FormViewController {
         let componentTitle = "Which components do you want to see?"
         let schoolTitle = "Which schools do you want to see?"
 
-        form +++ prepareMultipleChoiceSection(
+        classesFilterViewController.form +++ prepareMultipleChoiceSection(
             title: classTitle,
             options: dataSource.availableClassses(),
             state: dataSource.pickedClasses(),
             callback: { [weak self] result in self?.dataSource.onClassesPicked(result) }
         )
-            +++ prepareMultipleChoiceSection(
+        classesFilterViewController.indicatorTitle = "Classes"
+        
+        schoolFilterViewController.form +++ prepareMultipleChoiceSection(
                 title: schoolTitle,
                 options: dataSource.availableSchools(),
                 state: dataSource.pickedSchools(),
                 callback: { [weak self] result in self?.dataSource.onSchoolsPicked(result) }
             )
-            +++ prepareComponentsSection(
+        schoolFilterViewController.indicatorTitle = "Schools"
+        
+        componentsFilterViewController.form +++ prepareComponentsSection(
                 title: componentTitle,
                 options: dataSource.availableComponents(),
                 state: dataSource.pickedComponents(),
                 filterOptions: dataSource.availableComponentsFilter(),
                 filterState: dataSource.pickedComponentsFilter()
             )
+        componentsFilterViewController.indicatorTitle = "Components"
+        
+        reloadPagerTabStripView()
 
+    }
+    
+    override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
+        return [classesFilterViewController, schoolFilterViewController, componentsFilterViewController]
     }
 
     func prepareMultipleChoiceSection(title: String, options: [String], state: [String], callback: @escaping ([String]) -> Void) -> Section {
