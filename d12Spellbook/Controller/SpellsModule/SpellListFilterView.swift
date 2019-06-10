@@ -24,13 +24,8 @@ class SpellListFilterView: SegmentedPagerTabStripViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let classTitle = "Which classes do you want to see?"
-        let componentTitle = "Which components do you want to see?"
-        let schoolTitle = "Which schools do you want to see?"
-
+        
         classesFilterViewController.form +++ prepareMultipleChoiceSection(
-            title: classTitle,
             options: dataSource.availableClassses(),
             state: dataSource.pickedClasses(),
             callback: { [weak self] result in self?.dataSource.onClassesPicked(result) }
@@ -38,7 +33,6 @@ class SpellListFilterView: SegmentedPagerTabStripViewController {
         classesFilterViewController.indicatorTitle = "Classes"
         
         schoolFilterViewController.form +++ prepareMultipleChoiceSection(
-                title: schoolTitle,
                 options: dataSource.availableSchools(),
                 state: dataSource.pickedSchools(),
                 callback: { [weak self] result in self?.dataSource.onSchoolsPicked(result) }
@@ -46,7 +40,6 @@ class SpellListFilterView: SegmentedPagerTabStripViewController {
         schoolFilterViewController.indicatorTitle = "Schools"
         
         componentsFilterViewController.form +++ prepareComponentsSection(
-                title: componentTitle,
                 options: dataSource.availableComponents(),
                 state: dataSource.pickedComponents(),
                 filterOptions: dataSource.availableComponentsFilter(),
@@ -62,8 +55,8 @@ class SpellListFilterView: SegmentedPagerTabStripViewController {
         return [classesFilterViewController, schoolFilterViewController, componentsFilterViewController]
     }
 
-    func prepareMultipleChoiceSection(title: String, options: [String], state: [String], callback: @escaping ([String]) -> Void) -> Section {
-        let section = SelectableSection<ListCheckRow<String>>(title, selectionType: .multipleSelection)
+    func prepareMultipleChoiceSection(options: [String], state: [String], callback: @escaping ([String]) -> Void) -> Section {
+        let section = SelectableSection<ListCheckRow<String>>("", selectionType: .multipleSelection)
 
         let optionRows = options.map { option in
             ListCheckRow<String>(option) { listRow in
@@ -88,8 +81,8 @@ class SpellListFilterView: SegmentedPagerTabStripViewController {
         return section
     }
     
-    func prepareComponentsSection(title: String, options: [String], state: [String], filterOptions: [String], filterState: String) -> Section {
-        let section = SelectableSection<ListCheckRow<String>>(title, selectionType: .multipleSelection)
+    func prepareComponentsSection(options: [String], state: [String], filterOptions: [String], filterState: String) -> Section {
+        let section = SelectableSection<ListCheckRow<String>>("", selectionType: .multipleSelection)
         
         let optionRows = options.map { option in
             ListCheckRow<String>(option) { listRow in
